@@ -112,10 +112,10 @@ void set_generator_quiet(int quiet)
  */
 int generate_csv(int n, int generationType) 
 {
-	FILE *csv = fopen("build/db/players.csv", "w");
+	FILE *csv = fopen(CSV_FILE, "w");
 
 	if (csv == NULL) {
-		print_error(101, "build/db/players.csv", NULL);
+		print_error(101, CSV_FILE, NULL);
 		return 101;
 	}
 
@@ -169,7 +169,7 @@ int generate_csv(int n, int generationType)
 	free(players);
 	fclose(csv);
 	if (!generator_quiet) {
-		printf("\n" BG_GREEN "Data generated and saved to build/db/players.csv" RESET "\n");
+		printf("\n" BG_GREEN "Data generated and saved to " CSV_FILE "]" RESET "\n");
 	}
 
 	return 0;
