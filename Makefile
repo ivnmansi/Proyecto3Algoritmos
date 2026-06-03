@@ -1,5 +1,5 @@
-GRUPO := Andrés Barbosa, Iván Mansilla, Óscar Cifuentes
-NOMBRE_TAREA := tarea3
+GRUPO := Andres_B-Oscar_C-Ivan_M
+NOMBRE_TAREA := Tarea3_Algoritmos
 
 CC := gcc
 CFLAGS := -Wall -Wextra -std=c11 -Iinclude
@@ -38,7 +38,7 @@ clean:
 	rm -rf $(OBJ_DIR) $(BUILD_DIR)/*
 
 send: all
-	tar -czvf $(NOMBRE_TAREA)_G$(GRUPO).tar.gz $(SRC_DIR) $(INC_DIR) Makefile
+	tar -czvf $(NOMBRE_TAREA)_$(GRUPO).tar.gz $(SRC_DIR) $(INC_DIR) Makefile
 
 plot:
 	@echo "Generando graficos..." && gnuplot ./plots/plot.gp
