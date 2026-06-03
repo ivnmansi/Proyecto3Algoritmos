@@ -8,5 +8,6 @@
 #define CONFIG_H
 
 #define CSV_FILE "db/players.csv"
+#define CSV_DIR "db/"
 
 #endif

@@ -14,6 +14,7 @@
 #include "player.h" 
 #include "generate_exec_times.h"
 #include "smoke.h"
+#include "config.h"
 
 
 int main() {
@@ -94,8 +95,8 @@ int main() {
 
 	else if (option == 2) { // Opcion 2: Leer CSV
 		// Cargamos el arreglo de jugadores
-		if ((players = load_players("build/db/players.csv", &n)) == NULL) {
-			print_error(101, "build/db/players.csv", NULL);
+		if ((players = load_players(CSV_FILE, &n)) == NULL) {
+			print_error(101, CSV_FILE, NULL);
 			return 1;
 		}
 
@@ -105,7 +106,7 @@ int main() {
 
 	else if (option == 3) { // Opcion 3: Ordenar arreglo
         // Cargamos el arreglo de jugadores
-        if ((players = load_players("build/db/players.csv", &n)) == NULL) {
+        if ((players = load_players(CSV_FILE, &n)) == NULL) {
             return 1;
         }
 
@@ -224,7 +225,7 @@ int main() {
         printf(DARK_GREEN "Selection: " LIGHT_GREEN);
         scanf("%d", &subOption);
 
-        if ((players = load_players("build/db/players.csv", &n)) == NULL) return 1;
+        if ((players = load_players(CSV_FILE, &n)) == NULL) return 1;
 
         if (subOption == 1) { // TOP N RANKING
             printf(DARK_GREEN "\nHow many top athletes? " LIGHT_GREEN);

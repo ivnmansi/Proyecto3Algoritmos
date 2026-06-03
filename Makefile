@@ -1,5 +1,5 @@
-GRUPO := 1
-NOMBRE_TAREA := tarea2
+GRUPO := Andrés Barbosa, Iván Mansilla, Óscar Cifuentes
+NOMBRE_TAREA := tarea3
 
 CC := gcc
 CFLAGS := -Wall -Wextra -std=c11 -Iinclude

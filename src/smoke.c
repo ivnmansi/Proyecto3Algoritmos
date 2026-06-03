@@ -3,8 +3,16 @@
 #include "smoke.h"
 #include "generate_exec_times.h"
 #include "generator.h"
+#include "config.h"
 
 extern SortAlgorithmFlag current_active_flags;
+
+static void generate_case_csv(int generation_type, const char* destination_file)
+{
+    if (generate_csv(50000, generation_type) == 0) {
+        rename(CSV_FILE, destination_file);
+    }
+}
 
 void run_smoke_tests() {
     printf("\n" "\033[0;35m" "=== STARTING SMOKE TESTS ===" "\033[0m" "\n");
@@ -17,9 +25,9 @@ void run_smoke_tests() {
     current_active_flags = FLAG_ALL_SORTS;
     
     printf("1) Generando conjuntos de datos (Sorted, Inverted, Shuffled 50000 n)...\n");
-    generate_csv(50000, 1); rename("build/db/players.csv", "build/db/players_sorted.csv");
-    generate_csv(50000, 2); rename("build/db/players.csv", "build/db/players_inverted.csv");
-    generate_csv(50000, 3); rename("build/db/players.csv", "build/db/players_shuffled.csv");
+    generate_case_csv(1, CSV_DIR "players_sorted.csv");
+    generate_case_csv(2, CSV_DIR "players_inverted.csv");
+    generate_case_csv(3, CSV_DIR "players_shuffled.csv");
 
     printf("Guardando informacion del equipo...\n");
     system("mkdir -p docs/results");
@@ -33,10 +41,10 @@ void run_smoke_tests() {
     printf("\n" "\033[44m" "--- Exp 1: Ordenamiento ---" "\033[0m" "\n");
     printf("\n-> Exp 1 (Best/Worst/Average) en progreso...\n");
     run_sort_experiments(
-        "build/db/players_sorted.csv",
-        "build/db/players_inverted.csv",
-        "build/db/players_shuffled.csv",
-        "build/db/sort"
+        CSV_DIR "players_sorted.csv",
+        CSV_DIR "players_inverted.csv",
+        CSV_DIR "players_shuffled.csv",
+        CSV_DIR "sort"
     );
 
     /* ============================================
@@ -46,10 +54,10 @@ void run_smoke_tests() {
     printf("\n" "\033[44m" "--- Exp 2: Threshold de optimizacion ---" "\033[0m" "\n");
     printf("\n-> Exp 2 (Best/Worst/Average) en progreso...\n");
     run_threshold_experiments(
-        "build/db/players_sorted.csv",
-        "build/db/players_inverted.csv",
-        "build/db/players_shuffled.csv",
-        "build/db/threshold"
+        CSV_DIR "players_sorted.csv",
+        CSV_DIR "players_inverted.csv",
+        CSV_DIR "players_shuffled.csv",
+        CSV_DIR "threshold"
     );
 
     /* ============================================
@@ -58,7 +66,7 @@ void run_smoke_tests() {
      * ============================================ */
     printf("\n" "\033[44m" "--- Exp 3: Busqueda ---" "\033[0m" "\n");
     printf("\n-> Exp 3 (Average/Worst) en progreso...\n");
-    run_search_experiments("build/db/players_sorted.csv", "build/db/search");
+    run_search_experiments(CSV_DIR "players_sorted.csv", CSV_DIR "search");
 
     /* ============================================
      * EXPERIMENTO 4: SELECCION QUICK SELECT
@@ -67,9 +75,9 @@ void run_smoke_tests() {
     printf("\n" "\033[44m" "--- Exp 4: Seleccion ---" "\033[0m" "\n");
     printf("\n-> Exp 4 (Best/Worst) en progreso...\n");
     run_select_experiments(
-        "build/db/players_sorted.csv",
-        "build/db/players_shuffled.csv",
-        "build/db/select"
+        CSV_DIR "players_sorted.csv",
+        CSV_DIR "players_shuffled.csv",
+        CSV_DIR "select"
     );
 
     /* Restaurar estado */
