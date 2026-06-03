@@ -4,6 +4,8 @@
  * @brief Funciones para la ejecucion de pruebas experimentales de algoritmos.
  */
 
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdlib.h>
 #include <string.h>
 #include "generate_exec_times.h"

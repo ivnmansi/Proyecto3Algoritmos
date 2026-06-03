@@ -16,7 +16,7 @@
 #include "player.h"
 #include "utilities.h"
 
-void print_error(int num, char *target, char *obs);
+void print_error(int num, const char *target, const char *obs);
 
 #endif
 

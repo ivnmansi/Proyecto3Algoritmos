@@ -5,6 +5,7 @@
  */
 
 #include "player.h"
+#include <strings.h>
 #include "utilities.h"
 
 /**

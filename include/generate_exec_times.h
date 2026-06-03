@@ -7,6 +7,7 @@
 #define EXEC_H
 #define NUM_TRIALS 100
 #define NUM_STEPS 20
+#define NUM_AVG_RUNS 10
 #include <stdio.h>
 #include <time.h>
 
@@ -44,19 +45,21 @@ typedef enum {
     FLAG_MERGE_OPT16     = 1 << 5,
     FLAG_MERGE_OPT50     = 1 << 6,
     FLAG_QUICK_LAST      = 1 << 7,
-    FLAG_QUICK_RANDOM    = 1 << 8,
-    FLAG_QUICK_MEDIAN    = 1 << 9,
-    FLAG_ALL_SORTS       = 0x3FF
+    FLAG_QUICK_FIRST     = 1 << 8,
+    FLAG_QUICK_RANDOM    = 1 << 9,
+    FLAG_QUICK_MEDIAN    = 1 << 10,
+    FLAG_ALL_SORTS       = 0x7FF
 } SortAlgorithmFlag;
 
 void set_active_sort_flags(SortAlgorithmFlag* active_flags, SortAlgorithmFlag selected_flags[]);
 void set_experiment_quiet(int quiet);
 void set_experiment_show_samples(int show_samples);
-void run_threshold_experiment(void);
-void run_experiment(const char* target_file, const char* out_filename);
+void run_threshold_experiment(const char* target_file, const char* out_filename, int is_average_case);
+void run_experiment(const char* target_file, const char* out_filename, int is_average_case);
 void run_search_experiment(const char* target_file, const char* out_filename, int is_worst_case);
 void run_select_experiment(const char* target_file, const char* out_filename, int is_worst_case);
 void run_sort_experiments(const char* sorted_file, const char* inverted_file, const char* shuffled_file, const char* out_prefix);
+void run_threshold_experiments(const char* sorted_file, const char* inverted_file, const char* shuffled_file, const char* out_prefix);
 void run_search_experiments(const char* sorted_file, const char* out_prefix);
 void run_select_experiments(const char* sorted_file, const char* shuffled_file, const char* out_prefix);
 
