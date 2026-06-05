@@ -36,20 +36,11 @@ int main() {
 
 	srand(time(0));
 
-	printf(RESET "          ╔═══════════╗\n");
-	printf( "          ║ MAIN MENU ║\n");
-	printf("╔═════════╩═══════════╩══════════╗\n");
-	printf("║ "DARK_YELLOW "1)" YELLOW " Generate new CSV" RESET "            ║\n");
-	printf("║ "BROWN "2)" ORANGE " Read actual CSV" RESET "             ║\n");
-	printf("║ "DARK_BLUE "3)" LIGHT_BLUE " Sort CSV" RESET "                    ║\n");
-	printf("║ "DARK_GREEN "4)" LIGHT_GREEN " Search value in CSV" RESET "         ║\n");
-	printf("║ "PURPLE "5)" MAGENTA " Run experiment" RESET "              ║\n");
-	printf("║ "DARK_RED "6)" LIGHT_RED " Exit" RESET "                        ║\n");
-	printf("╚════════════════════════════════╝\n");
-	printf(DARK_GRAY"Choose an option: " RESET);
+    // Imprime menú
+    print_menu();
 	
 	check =	scanf("%d", &option);
-	while (check != 1 || option < 1 || option > 6) {
+	while (check != 1 || option < 1 || option > 7) {
 		printf(DARK_GRAY"Invalid option, try again: " RESET);
 		while (getchar() != '\n');
 		check = scanf("%d", &option);
@@ -66,15 +57,8 @@ int main() {
 			check = scanf("%d", &n);
 		}
 
-		printf(BROWN "   ╔════════════════════════╗\n");
-		printf(BROWN "   ║" YELLOW "  Choose the case type  " BROWN "║" "\n");
-		printf(BROWN "╔══╩════════════════════════╩══╗\n");
-		printf(BROWN "║" DARK_YELLOW " 1)" YELLOW " Sorted Array" BROWN "              ║\n");
-		printf(BROWN "║" DARK_YELLOW " 2)" YELLOW " Inverse Array" BROWN "             ║\n");
-		printf(BROWN "║" DARK_YELLOW " 3)" YELLOW " Shuffled Array" BROWN "            ║\n");
-		printf(BROWN"╚══════════════════════════════╝\n");
+        print_sort_generate_menu();
 
-		printf(DARK_YELLOW"Option: " YELLOW);
 		check = scanf("%d", &generationType);
 		while (check != 1 || n < 0) {
 			printf(BROWN "Invalid option, try again: " DARK_YELLOW);
@@ -113,22 +97,7 @@ int main() {
         printf(LIGHT_BLUE "\nOriginal file:\n" RESET);
         print_player_array_more(players, n);
 
-        
-        printf(EVEN_DARKER_BLUE"    ╔════════════════════════════╗\n");
-        printf(EVEN_DARKER_BLUE"    ║" LIGHT_BLUE " Choose a sorting algorithm " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "╔═══╩════════════════════════════╩═══╗\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 1)" LIGHT_BLUE " Swap Sort                       " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 2)" LIGHT_BLUE " Insertion Sort                  " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 3)" LIGHT_BLUE " Selection Sort                  " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 4)" LIGHT_BLUE " Cocktail Shaker Sort            " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 5)" LIGHT_BLUE " Merge Sort (Classic)            " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 6)" LIGHT_BLUE " Merge Sort (Optimized)          " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 7)" LIGHT_BLUE " Quick Sort (Last Pivot)         " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 8)" LIGHT_BLUE " Quick Sort (First Pivot)        " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 9)" LIGHT_BLUE " Quick Sort (Random Pivot)       " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 10)" LIGHT_BLUE" Quick Sort (Median of 3)       " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "╚════════════════════════════════════╝\n");
-        printf(DARK_BLUE "Option: " LIGHT_BLUE);
+        print_sort_case_menu();
         
         check = scanf("%d", &sortOption);
         while (check != 1 || sortOption < 1 || sortOption > 10) {
@@ -151,19 +120,7 @@ int main() {
 
         // Elegir el campo a ordenar
         
-        printf(EVEN_DARKER_BLUE"   ╔══════════════════════╗\n");
-        printf(EVEN_DARKER_BLUE"   ║" LIGHT_BLUE " Choose field to sort " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE"   ║" LIGHT_BLUE "    by (Ascending)    " EVEN_DARKER_BLUE "║\n");
-        printf(EVEN_DARKER_BLUE "╔══╩══════════════════════╩══╗\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 1)" LIGHT_BLUE " ID                      " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 2)" LIGHT_BLUE " Name                    " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 3)" LIGHT_BLUE " Team                    " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 4)" LIGHT_BLUE " Score                   " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 5)" LIGHT_BLUE " Competitions            " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 6)" LIGHT_BLUE " Cost                    " EVEN_DARKER_BLUE "║" "\n");
-        printf(EVEN_DARKER_BLUE "╚════════════════════════════╝\n");
-
-        printf(DARK_BLUE "Option: " LIGHT_BLUE);
+        print_field_to_sort_menu();
 
         check = scanf("%d", &sortCriteria);
         while (check != 1 || sortCriteria < 1 || sortCriteria > 6) {
@@ -215,16 +172,7 @@ int main() {
         int topN, k_rank;
         float minScore, maxScore;
         
-        printf(EVEN_DARKER_GREEN "\n   ╔═══════════════════════════════════════╗\n");
-        printf(EVEN_DARKER_GREEN "   ║" LIGHT_GREEN "    Data Analytics & Rankings Menu     " EVEN_DARKER_GREEN "║\n");
-        printf(EVEN_DARKER_GREEN "   ╚═══════════════════════════════════════╝\n");
-        printf(EVEN_DARKER_GREEN "   ║" DARK_GREEN " 1)" LIGHT_GREEN " Generate Top N Ranking (by Score)  " EVEN_DARKER_GREEN "║\n");
-        printf(EVEN_DARKER_GREEN "   ║" DARK_GREEN " 2)" LIGHT_GREEN " Find the K-th Best Athlete         " EVEN_DARKER_GREEN "║\n");
-        printf(EVEN_DARKER_GREEN "   ║" DARK_GREEN " 3) " LIGHT_GREEN "Search Athletes by Score Range     " EVEN_DARKER_GREEN "║\n");
-        printf(EVEN_DARKER_GREEN "   ║" DARK_GREEN " 4) " LIGHT_GREEN "Search Athlete by exact ID         " EVEN_DARKER_GREEN "║\n");
-        printf(EVEN_DARKER_GREEN "   ╚═══════════════════════════════════════╝\n");
-        
-        printf(DARK_GREEN "Selection: " LIGHT_GREEN);
+        print_data_analytics_menu();
         scanf("%d", &subOption);
 
         if ((players = load_players(CSV_FILE, &n)) == NULL) return 1;
@@ -320,40 +268,16 @@ int main() {
         free(players);
     }
 
-	else if (option == 5) { // Opcion 5: Ejecutar experimento
+    else if(option == 5){ // Opción 5: Crear equipo con CSV
+        // wip
+    }
+
+	else if (option == 6) { // Opcion 6: Ejecutar experimento
         run_smoke_tests();
 	}
 
-	else if (option == 6) { // Opcion 6: Salir del programa
-
-		// 1/2 de probablidad de salir crocodile o aligator
-		if (rand() % 2 == 0) {
-			printf(DARK_GREEN);
-			printf("   _____                                   _                            _     _ _        \n");
-			printf("  / ____|                                 (_)                          | |   (_) |       \n");
-			printf(" | (___   ___  ___    _   _  ___  _   _    _ _ __      __ _   __      _| |__  _| | ___   \n");
-			printf("  \\___ \\ / _ \\/ _ \\  | | | |/ _ \\| | | |  | | '_ \\    / _` |  \\ \\ /\\ / / '_ \\| | |/ _ \\  \n");
-			printf("  ____) |  __/  __/  | |_| | (_) | |_| |  | | | | |  | (_| |   \\ V  V /| | | | | |  __/  \n");
-			printf(" |_____/ \\___|\\___|   \\__, |\\___/_\\__,_|  |_|_| |_|   \\__,_|    \\_/\\_/ |_| |_|_|_|\\___|  \n");
-			printf("                       __/ |  | (_) |    | |                                             \n");
-			printf("   ___ _ __ ___   ___ |___/ __| |_| | ___| |                                             \n");
-			printf("  / __| '__/ _ \\ / __/ _ \\ / _` | | |/ _ \\ |                                             \n");
-			printf(" | (__| | | (_) | (_| (_) | (_| | | |  __/_|                                             \n");
-			printf("  \\___|_|  \\___/ \\___\\___/ \\__,_|_|_|\\___(_)                                             \n");
-			printf(RESET);
-			return 0;
-		}
-
-		printf(DARK_RED);
-		printf("   _____                                   _       _                     _ _             _             _ \n");
-		printf("  / ____|                                 | |     | |                   | (_)           | |           | |\n");
-		printf(" | (___   ___  ___    _   _  ___  _   _   | | __ _| |_ ___ _ __     __ _| |_  __ _  __ _| |_ ___  _ __| |\n");
-		printf("  \\___ \\ / _ \\/ _ \\  | | | |/ _ \\| | | |  | |/ _` | __/ _ \\ '__|   / _` | | |/ _` |/ _` | __/ _ \\| '__| |\n");
-		printf("  ____) |  __/  __/  | |_| | (_) | |_| |  | | (_| | ||  __/ |     | (_| | | | (_| | (_| | || (_) | |  |_|\n");
-		printf(" |_____/ \\___|\\___|   \\__, |\\___/ \\__,_|  |_|\\__,_|\\__\\___|_|      \\__,_|_|_|\\__, |\\__,_|\\__\\___/|_|  (_)\n");
-		printf("                       __/ |                                                  __/ |                      \n");
-		printf("                      |___/                                                  |___/                       \n");
-		printf(RESET);
+	else if (option == 7) { // Opcion 7: Salir del programa
+        print_goodbye();
 	}
 
 	return 0;

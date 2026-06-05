@@ -7,6 +7,8 @@
 #define UTILITIES_H
 
 #include <stdio.h>
+#include <stdlib.h>
+
 
 // Colores para texto
 #define CLEAR_SCREEN "\033[H\033[J"
@@ -34,8 +36,10 @@
 #define LIGHT_RED "\x1b[38;5;210m"
 #define DARK_RED "\x1b[38;5;160m"
 #define LIGHT_GREEN "\x1b[38;5;157m"
-#define DARK_GREEN "\x1b[38;5;2m"
+#define DARK_GREEN "\x1b[38;5;22m"
 #define PINK "\x1b[38;5;225m"
+#define DARK_CYAN "\x1b[38;5;44m"
+#define LIGHT_CYAN "\x1b[38;5;159m"
 
 // Colores de cajas (dado que "Even Darker _" resulto comico, asi quedara XD )
 #define EVEN_DARKER_GREEN "\x1b[38;5;34m"
@@ -54,6 +58,15 @@
 #define MAG4 "\x1b[38;5;219m"
 #define MAG5 "\x1b[38;5;177m"
 #define MAG6 "\x1b[38;5;171m"
+
+// Funciones de print
+void print_menu();
+void print_sort_generate_menu();
+void print_sort_case_menu();
+void print_field_to_sort_menu();
+void print_data_analytics_menu();
+void print_goodbye();
+
 
 // !MIRA! el nivel de !INGLES! que posees,
 // searching.c

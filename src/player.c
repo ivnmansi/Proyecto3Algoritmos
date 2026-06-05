@@ -163,7 +163,7 @@ void print_player_array(Player *players, int n)
 		DARK_GRAY "|" RESET " "
 		PURPLE "%3s" RESET " "
 		DARK_GRAY "|" RESET " "
-		ORANGE "%5s" RESET " "
+		ORANGE "%6s" RESET " "
 		DARK_GRAY "|" RESET "\n",
 		"ID", "NAME", "TEAM", "SCORE", "COMPS", "COST"
 	);
@@ -218,7 +218,7 @@ static void print_player_array_page(Player *players, int start, int end)
 		DARK_GRAY "|" RESET " "
 		PURPLE "%3s" RESET " "
 		DARK_GRAY "|" RESET " "
-		ORANGE "%5s" RESET " "
+		ORANGE "%6s" RESET " "
 		DARK_GRAY "|" RESET "\n",
 		"ID", "NAME", "TEAM", "SCORE", "COMPS", "COST"
 	);
