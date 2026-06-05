@@ -41,6 +41,7 @@ bool are_players_equal(Player *p1, Player *p2) {
 	if (p1->score != p2->score) return false;
 	if (p1->competitions != p2->competitions) return false;
 	if (p1->potatoe != p2->potatoe) return false;
+	if (p1->costo != p2->costo) return false;
 
 	// Comparar arreglos de caracteres estaticos (name y team)
 	if (strcasecmp(p1->name, p2->name) != 0) return false;
@@ -107,6 +108,19 @@ int compare_competitions(Player *p1, Player *p2) {
 	return p1->id - p2->id;
 }
 
+/**
+ * @brief Compara dos jugadores basandose en su costo.
+ * * Evalua los valores enteros del campo `costo`.
+ * * @param p1 Puntero al primer jugador.
+ * @param p2 Puntero al segundo jugador.
+ * @return Desempate por ID.
+ */
+int compare_cost(Player *p1, Player *p2) {
+	if (p1->costo > p2->costo) return 1;
+	if (p1->costo < p2->costo) return -1;
+	return p1->id - p2->id;
+}
+
 
 /**
  * @brief Imprime un jugador por consola.
@@ -120,6 +134,7 @@ void print_player(Player *player) {
 	printf(EVEN_DARKER_GREEN "║ " DARK_BLUE"Team: "LIGHT_BLUE"%7s" EVEN_DARKER_GREEN "      ║\n", player->team);
 	printf(EVEN_DARKER_GREEN "║ " DARK_GREEN"Score: "LIGHT_GREEN"%.1f" EVEN_DARKER_GREEN "         ║\n", player->score);
 	printf(EVEN_DARKER_GREEN "║ " PURPLE"Competitions: "MAGENTA"%4d" EVEN_DARKER_GREEN " ║\n", player->competitions);
+	printf(EVEN_DARKER_GREEN "║ " MAGENTA"Cost: "LIGHT_RED"$%4d" EVEN_DARKER_GREEN "        ║\n", player->costo);
 	printf(EVEN_DARKER_GREEN "╚════════════════════╝\n");
 	printf(RESET"\n");
 }
@@ -147,8 +162,10 @@ void print_player_array(Player *players, int n)
 		DARK_GREEN "%4s" RESET " "
 		DARK_GRAY "|" RESET " "
 		PURPLE "%3s" RESET " "
-		DARK_GRAY "|" RESET "\n",
-		"ID", "NAME", "TEAM", "SCORE", "COMPS"
+		DARK_GRAY "|" RESET " "
+		MAGENTA "%5s" RESET " "
+			DARK_GRAY "|" RESET "\n",
+		"ID", "NAME", "TEAM", "SCORE", "COMPS", "COST"
 	);
 
 	// Imprimimos los datos
@@ -164,12 +181,17 @@ void print_player_array(Player *players, int n)
 			LIGHT_GREEN "%5.1f" RESET " "
 			DARK_GRAY "|" RESET " "
 			MAGENTA "%5d" RESET " "
-			DARK_GRAY "|" RESET "\n",
+			DARK_GRAY "|" RESET " "
+			LIGHT_GRAY "%5d" RESET " "
+			DARK_GRAY "|" RESET "\n"
+			,
 			players[i].id,
 			players[i].name,
 			players[i].team,
 			players[i].score,
-			players[i].competitions
+			players[i].competitions,
+			players[i].costo
+
 		);
 	}
 	printf(RESET"\n");
@@ -195,8 +217,10 @@ static void print_player_array_page(Player *players, int start, int end)
 		DARK_GREEN "%4s" RESET " "
 		DARK_GRAY "|" RESET " "
 		PURPLE "%3s" RESET " "
+		DARK_GRAY "|" RESET " "
+		MAGENTA "%5s" RESET " "
 		DARK_GRAY "|" RESET "\n",
-		"ID", "NAME", "TEAM", "SCORE", "COMPS"
+		"ID", "NAME", "TEAM", "SCORE", "COMPS", "COST"
 	);
 
 	for (int i = start; i < end; i++) {
@@ -211,12 +235,16 @@ static void print_player_array_page(Player *players, int start, int end)
 			LIGHT_GREEN "%5.1f" RESET " "
 			DARK_GRAY "|" RESET " "
 			MAGENTA "%5d" RESET " "
+			DARK_GRAY "|" RESET " "
+			LIGHT_RED "$%5d" RESET " "
 			DARK_GRAY "|" RESET "\n",
 			players[i].id,
 			players[i].name,
 			players[i].team,
 			players[i].score,
-			players[i].competitions
+			players[i].competitions,
+			players[i].costo
+
 		);
 	}
 }

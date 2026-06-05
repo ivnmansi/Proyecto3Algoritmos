@@ -10,4 +10,6 @@
 #define CSV_FILE "db/players.csv"
 #define CSV_DIR "db/"
 
+#define COST_MAX 10000
+
 #endif

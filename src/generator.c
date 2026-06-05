@@ -92,6 +92,7 @@ static void generate_player(int id, Player *player)
 	strcpy(player->team, teams[rand() % 9]);
 	player->score = (rand() % 100 + 1) / 10.0f;
 	player->competitions = rand() % 251;
+	player->costo = rand() % COST_MAX;
 
 	// Aqui no hay nada que ver agente...
 	player->potatoe = rand() % 2 ? true : false;
@@ -148,16 +149,17 @@ int generate_csv(int n, int generationType)
 
 	// Imprimimos cabecera en el archivo csv
 	fprintf(csv, "%d\n", n);
-	fprintf(csv, "ID NAME TEAM SCORE COMPETITIONS POTATOE\n");
+	fprintf(csv, "ID NAME TEAM SCORE COMPETITIONS COST POTATOE\n");
 
 	// Imprimimos los datos en el archivo csv
 	for (int i = 0; i < n; i++) {
-		fprintf(csv, "%d %s %s %.1f %d %s\n",
+		fprintf(csv, "%d %s %s %.1f %d %d %s\n",
 			players[i].id,
 			players[i].name,
 			players[i].team,
 			players[i].score,
 			players[i].competitions,
+			players[i].costo,
 			players[i].potatoe ? "true" : "false"
 		);
 	}
@@ -220,7 +222,7 @@ Player* load_players(char* file, int* out_n)
 	}
 
 	// Leer cabecera
-	if (fscanf(csv, "%*s %*s %*s %*s %*s %*s") == EOF) {
+	if (fscanf(csv, "%*s %*s %*s %*s %*s %*s %*s") == EOF) {
 		free(playerArray);
 		fclose(csv);
 		print_error(101, file, "No se pudo leer la cabecera");
@@ -230,19 +232,20 @@ Player* load_players(char* file, int* out_n)
 	// Leer jugadores
 	for (int i = 0; i < n; i++) {
 		// Este campo no parece ser muy relevante, no lo tome en cuenta agente.
-		char mysteriousStr[8];
+		char mysteriousStr[9];
 
 		// Leemos los datos de la linea (el ultimo campo lo leemos y guardamos en mysteriousStr)
-		int fields = fscanf(csv, "%d %10s %10s %f %d %7s",
+		int fields = fscanf(csv, "%d %10s %10s %f %d %d %8s",
 			&playerArray[i].id,
 			playerArray[i].name,
 			playerArray[i].team,
 			&playerArray[i].score,
 			&playerArray[i].competitions,
+			&playerArray[i].costo,
 			mysteriousStr
 		);
 	
-		if (fields != 6) {
+		if (fields != 7) {
 			free(playerArray);
 			fclose(csv);
 			print_error(101, file, "CSV malformada");

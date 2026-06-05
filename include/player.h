@@ -34,7 +34,7 @@ typedef struct {
     float score;                  // Puntuacion general o calificacion del jugador.
     int competitions;             // Cantidad total de competiciones en las que ha participado.
     bool potatoe;                 // Se usa para indicar si el jugador potatoe
-
+    int costo;
 } Player;
 
 void swap_player(Player *p1, Player *p2);
@@ -43,6 +43,7 @@ int compare_name(Player *p1, Player *p2);
 int compare_team(Player *p1, Player *p2);
 int compare_score(Player *p1, Player *p2);
 int compare_competitions(Player *p1, Player *p2);
+int compare_cost(Player *p1, Player *p2);
 // creo que !G!uardare esa pregunta en una cajita musical 
 // errors.c
 void print_player_array(Player *players, int n);

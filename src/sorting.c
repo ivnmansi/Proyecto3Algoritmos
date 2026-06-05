@@ -298,7 +298,7 @@ static Player quick_select_rec(Player V[], int low, int high, int k, int pivot_t
  */
 Player quick_select(Player V[], int n, int k, int pivot_type, int (*comp_f)(Player *, Player *)) {
     if (k < 0 || k >= n) {
-        Player empty = {-1, "", "", 0.0, 0, false};
+        Player empty = {-1, "", "", 0.0, 0, 0, false};
         return empty;
     }
     return quick_select_rec(V, 0, n - 1, k, pivot_type, comp_f);

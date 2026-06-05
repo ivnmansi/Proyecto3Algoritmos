@@ -160,12 +160,13 @@ int main() {
         printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 3)" LIGHT_BLUE " Team                    " EVEN_DARKER_BLUE "║" "\n");
         printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 4)" LIGHT_BLUE " Score                   " EVEN_DARKER_BLUE "║" "\n");
         printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 5)" LIGHT_BLUE " Competitions            " EVEN_DARKER_BLUE "║" "\n");
+        printf(EVEN_DARKER_BLUE "║" DARK_BLUE " 6)" LIGHT_BLUE " Cost                    " EVEN_DARKER_BLUE "║" "\n");
         printf(EVEN_DARKER_BLUE "╚════════════════════════════╝\n");
 
         printf(DARK_BLUE "Option: " LIGHT_BLUE);
 
         check = scanf("%d", &sortCriteria);
-        while (check != 1 || sortCriteria < 1 || sortCriteria > 5) {
+        while (check != 1 || sortCriteria < 1 || sortCriteria > 6) {
             printf(EVEN_DARKER_BLUE"Invalid option, try again: " DARK_BLUE);
             while (getchar() != '\n');
             check = scanf("%d", &sortCriteria);
@@ -178,6 +179,7 @@ int main() {
         else if (sortCriteria == 3) comp_ptr = compare_team;
         else if (sortCriteria == 4) comp_ptr = compare_score;
         else if (sortCriteria == 5) comp_ptr = compare_competitions;
+        else if (sortCriteria == 6) comp_ptr = compare_cost;
         else {
             printf(RESET BG_RED "Invalid criteria option.\n" RESET);
         }
@@ -290,7 +292,7 @@ int main() {
 
             printf(DARK_GREEN "\nEnter exact ID: " LIGHT_GREEN);
             scanf("%d", &searchId);
-            Player target = {searchId, "", "", 0.0, 0, false};
+            Player target = {searchId, "", "", 0.0, 0, 0, false};
             
             // Si el algoritmo requiere orden previo (Binarias, Exponencial, Interpolación)
             if (searchAlgo >= 2) {
