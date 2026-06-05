@@ -24,7 +24,8 @@
 #define WHITE "\x1b[97m"
 #define YELLOW "\x1b[38;5;229m"
 #define DARK_YELLOW "\x1b[38;5;220m"
-#define ORANGE "\x1b[38;5;216m"
+#define ORANGE "\x1b[38;5;215m"
+#define LIGHT_ORANGE "\x1b[38;5;217m"
 #define BROWN "\x1b[38;5;172m"
 #define DARK_BLUE "\x1b[38;5;75m"
 #define LIGHT_BLUE "\x1b[38;5;153m"
@@ -34,6 +35,7 @@
 #define DARK_RED "\x1b[38;5;160m"
 #define LIGHT_GREEN "\x1b[38;5;157m"
 #define DARK_GREEN "\x1b[38;5;2m"
+#define PINK "\x1b[38;5;225m"
 
 // Colores de cajas (dado que "Even Darker _" resulto comico, asi quedara XD )
 #define EVEN_DARKER_GREEN "\x1b[38;5;34m"

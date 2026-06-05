@@ -163,8 +163,8 @@ void print_player_array(Player *players, int n)
 		DARK_GRAY "|" RESET " "
 		PURPLE "%3s" RESET " "
 		DARK_GRAY "|" RESET " "
-		MAGENTA "%5s" RESET " "
-			DARK_GRAY "|" RESET "\n",
+		ORANGE "%5s" RESET " "
+		DARK_GRAY "|" RESET "\n",
 		"ID", "NAME", "TEAM", "SCORE", "COMPS", "COST"
 	);
 
@@ -182,7 +182,7 @@ void print_player_array(Player *players, int n)
 			DARK_GRAY "|" RESET " "
 			MAGENTA "%5d" RESET " "
 			DARK_GRAY "|" RESET " "
-			LIGHT_GRAY "%5d" RESET " "
+			LIGHT_ORANGE "%5d" RESET " "
 			DARK_GRAY "|" RESET "\n"
 			,
 			players[i].id,
@@ -218,7 +218,7 @@ static void print_player_array_page(Player *players, int start, int end)
 		DARK_GRAY "|" RESET " "
 		PURPLE "%3s" RESET " "
 		DARK_GRAY "|" RESET " "
-		MAGENTA "%5s" RESET " "
+		ORANGE "%5s" RESET " "
 		DARK_GRAY "|" RESET "\n",
 		"ID", "NAME", "TEAM", "SCORE", "COMPS", "COST"
 	);
@@ -236,7 +236,7 @@ static void print_player_array_page(Player *players, int start, int end)
 			DARK_GRAY "|" RESET " "
 			MAGENTA "%5d" RESET " "
 			DARK_GRAY "|" RESET " "
-			LIGHT_RED "$%5d" RESET " "
+			LIGHT_ORANGE "$%5d" RESET " "
 			DARK_GRAY "|" RESET "\n",
 			players[i].id,
 			players[i].name,
