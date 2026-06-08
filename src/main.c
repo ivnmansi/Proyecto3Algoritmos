@@ -34,6 +34,7 @@ int main() {
 	int searchId;
 	int result;
 
+
 	srand(time(0));
 
     // Imprime menú
@@ -269,7 +270,64 @@ int main() {
     }
 
     else if(option == 5){ // Opción 5: Crear equipo con CSV
-        // wip
+        int suboption, budget;
+        int algorithm_choice;
+        // Cargamos el arreglo de jugadores
+        if ((players = load_players(CSV_FILE, &n)) == NULL) {
+            return 1;
+        }
+        printf(LIGHT_BLUE "\nOriginal file:\n" RESET);
+        print_player_array_more(players, n);
+
+        // seleccionar con o sin restriccion presupuestaria
+
+        print_create_team_budget_menu();
+        check = scanf("%d", &suboption);
+        while (check != 1 || suboption < 1 || suboption > 2) {
+            printf(EVEN_DARKER_BLUE"Invalid option, try again: " DARK_BLUE);
+            while (getchar() != '\n');
+            check = scanf("%d", &suboption);
+        }
+
+        if(suboption == 1){
+            printf(DARK_YELLOW "\nEnter team budget ($): " YELLOW);
+            check = scanf("%d", &budget);
+            while (check != 1 || budget < 0) {
+                printf(EVEN_DARKER_BLUE"Invalid budget, try again: " DARK_BLUE);
+                while (getchar() != '\n');
+                check = scanf("%d", &budget);
+            }
+
+            print_create_team_budget_algorithm_menu();
+            check = scanf("%d", &algorithm_choice);
+            while (check != 1 || algorithm_choice < 1 || algorithm_choice > 5) {
+                printf(EVEN_DARKER_BLUE"Invalid option, try again: " DARK_BLUE);
+                while (getchar() != '\n');
+                check = scanf("%d", &algorithm_choice);
+            }
+
+            if (algorithm_choice == 1) {
+                printf(LIGHT_BLUE "\nUsing DP Top-Down (Memoization).\n" RESET);
+            } else if (algorithm_choice == 2) {
+                printf(LIGHT_BLUE "\nUsing DP Bottom-Up (Tabulation).\n" RESET);
+            } else if (algorithm_choice == 3) {
+                printf(LIGHT_BLUE "\nUsing Greedy (by Score).\n" RESET);
+            } else if (algorithm_choice == 4) {
+                printf(LIGHT_BLUE "\nUsing Greedy (by Score/Cost).\n" RESET);
+            } else {
+                printf(LIGHT_BLUE "\nUsing Greedy (by Lowest Cost).\n" RESET);
+            }
+            printf(BG_RED "Team creation is not implemented yet." RESET "\n");
+        }
+        // sin restriccion de presupuesto
+        else {
+            // greedy por score
+            
+            printf(BG_RED "Team creation is not implemented yet." RESET "\n");
+            
+        }
+        
+        free(players);
     }
 
 	else if (option == 6) { // Opcion 6: Ejecutar experimento

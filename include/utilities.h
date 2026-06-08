@@ -65,6 +65,8 @@ void print_sort_generate_menu();
 void print_sort_case_menu();
 void print_field_to_sort_menu();
 void print_data_analytics_menu();
+void print_create_team_budget_menu();
+void print_create_team_budget_algorithm_menu();
 void print_goodbye();
 
 

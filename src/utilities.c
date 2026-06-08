@@ -73,6 +73,31 @@ void print_data_analytics_menu(){
         printf(DARK_GREEN "Selection: " LIGHT_GREEN);
 }
 
+void print_create_team_budget_menu(){
+                printf(EVEN_DARKER_BLUE "\n   ╔═══════════════════════════════════════╗\n");
+                printf(EVEN_DARKER_BLUE "   ║" LIGHT_BLUE "    Create Team                        " EVEN_DARKER_BLUE "║\n");
+                printf(EVEN_DARKER_BLUE "   ╠═══════════════════════════════════════╣\n");
+                printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 1)" LIGHT_BLUE " With budget constraint             " EVEN_DARKER_BLUE "║\n");
+                printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 2)" LIGHT_BLUE " No budget constraint               " EVEN_DARKER_BLUE "║\n");
+                printf(EVEN_DARKER_BLUE "   ╚═══════════════════════════════════════╝\n");
+
+                printf(DARK_BLUE "Selection: " LIGHT_BLUE);
+}
+
+void print_create_team_budget_algorithm_menu(){
+    printf(EVEN_DARKER_BLUE "\n   ╔═══════════════════════════════════════╗\n");
+    printf(EVEN_DARKER_BLUE "   ║" LIGHT_BLUE " Choose algorithm for team creation    " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ╠═══════════════════════════════════════╣\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 1)" LIGHT_BLUE " DP Top-Down (Memoization)          " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 2)" LIGHT_BLUE " DP Bottom-Up (Tabulation)          " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 3)" LIGHT_BLUE " Greedy (by Score)                  " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 4)" LIGHT_BLUE " Greedy (by Score/Cost)             " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 5)" LIGHT_BLUE " Greedy (by Lowest Cost)            " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ╚═══════════════════════════════════════╝\n");
+    printf(DARK_BLUE "Selection: " LIGHT_BLUE);
+}
+
+
 void print_goodbye(){
     // 1/2 de probablidad de salir crocodile o aligator
 		if (rand() % 2 == 0) {
