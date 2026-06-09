@@ -1,4 +1,6 @@
 #include "team.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
  * @brief 
@@ -48,38 +50,52 @@ void print_team(const Team* team){
 
 /** ------ ALGORITMOS ------ */
 
-/* DP Top-Down (Memoization) */
-Team create_team_dp_topdown(Player *players, int n, int budget) {
+Team create_team_dp_topdown(Player *players, int n, int budget, int team_size){
     /* TODO: implementar */
     return init_team();
 }
 
-/* DP Bottom-Up (Tabulation) */
-Team create_team_dp_bottomup(Player *players, int n, int budget) {
+Team create_team_dp_bottomup(Player *players, int n, int budget, int team_size){
     /* TODO: implementar */
     return init_team();
 }
 
-/* Greedy: seleccionar por score (con restricción de presupuesto) */
-Team create_team_greedy_by_score(Player *players, int n, int budget) {
-    /* TODO: implementar */
-    return init_team();
+/* Estrategias voraces (con restricción de presupuesto) */
+/* #IVAN */
+Team create_team_greedy(Player *players, int n, int budget, int team_size, GreedyStrategy strategy){
+    Team team = init_team();
+
+    // ordenar según estrategia
+    switch(strategy){
+        case GREEDY_BY_SCORE:
+            merge_sort_optimized(players, n, 32, compare_score);
+            break;
+        case GREEDY_BY_SCORE_COST:
+            merge_sort_optimized(players, n, 32, compare_score_cost);
+            break;
+        case GREEDY_BY_LOWEST_COST:
+            merge_sort_optimized(players, n, 32, compare_cost);
+            break;
+        default:
+            printf("Invalid greedy strategy.\n");
+            return team;
+    }
+
+    for(int i = 0; i < n; i++){
+
+        if(team.num_players >= team_size) break;
+
+        if (players[i].costo <= budget) {
+            add_player_to_team(&team, players[i]);
+            budget -= players[i].costo;
+        }
+    }
+
+    return team;
 }
 
-/* Greedy: seleccionar por relación score/costo (con restricción de presupuesto) */
-Team create_team_greedy_by_score_cost(Player *players, int n, int budget) {
-    /* TODO: implementar */
-    return init_team();
-}
-
-/* Greedy: seleccionar por menor costo primero (con restricción de presupuesto) */
-Team create_team_greedy_by_lowest_cost(Player *players, int n, int budget) {
-    /* TODO: implementar */
-    return init_team();
-}
-
-/* Greedy para escenario sin restricción: seleccionar mejores por score hasta tamaño */
-Team create_team_greedy_unconstrained_by_score(Player *players, int n, int team_size) {
+/* Estrategia voraz para escenario sin restricción (selección por score) */
+Team create_team_greedy_unconstrained(Player *players, int n, int team_size){
     /* TODO: implementar */
     return init_team();
 }

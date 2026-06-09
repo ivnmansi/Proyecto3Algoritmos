@@ -116,8 +116,24 @@ int compare_competitions(Player *p1, Player *p2) {
  * @return Desempate por ID.
  */
 int compare_cost(Player *p1, Player *p2) {
-	if (p1->costo > p2->costo) return 1;
 	if (p1->costo < p2->costo) return -1;
+	if (p1->costo > p2->costo) return 1;
+	return p1->id - p2->id;
+}
+
+/**
+ * @brief Compara dos jugadores basandose en una relacion entre su puntuacion y su costo.
+ * 
+ * @param p1 Puntero al primer jugador.
+ * @param p2 Puntero al segundo jugador.
+ * @return int Desempate por ID.
+ */
+int compare_score_cost(Player *p1, Player *p2){
+	float ratio1 = p1->score / (p1->costo + 1);
+	float ratio2 = p2->score / (p2->costo + 1);
+	
+	if (ratio1 > ratio2) return 1;
+	if (ratio1 < ratio2) return -1;
 	return p1->id - p2->id;
 }
 

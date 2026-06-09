@@ -2,3 +2,5 @@
 *.out
 /obj
 *.o
+.vscode
+compile_commands.json
