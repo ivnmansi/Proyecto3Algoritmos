@@ -38,20 +38,28 @@ void add_player_to_team(Team* team, Player player){
 }
 
 /**
- * @brief ARREGLAR FORMATO!!!
+ * @brief 
  * 
  * @param team 
  */
 void print_team(const Team* team){
-    for(int i = 0; i < team->num_players; i++){
-        printf("Player %d: %s\n", i + 1, team->players[i].name);
-    }
+    print_player_array_more(team->players, team->num_players);
 }
 
 /** ------ ALGORITMOS ------ */
-// Función auxiliar recursiva para DP Top-Down (Opción 1: Solo Presupuesto)
-static float dp_topdown_rec_2d(int i, int b, Player *players, int n, 
-                               float *memo, int *decisions, int dim_b) {
+/**
+ * @brief Función auxiliar recursiva para DP Top-Down (presupuesto)
+ * 
+ * @param i 
+ * @param b 
+ * @param players 
+ * @param n 
+ * @param memo 
+ * @param decisions 
+ * @param dim_b 
+ * @return float 
+ */
+static float dp_topdown_rec_2d(int i, int b, Player *players, int n, float *memo, int *decisions, int dim_b) {
     if (i == n) return 0.0f; 
 
     long idx = (long)i * dim_b + b;
@@ -77,6 +85,16 @@ static float dp_topdown_rec_2d(int i, int b, Player *players, int n,
 
     return memo[idx];
 }
+
+/**
+ * @brief Crea un equipo utilizando top-down DP con restricción de presupuesto.
+ * 
+ * @param players 
+ * @param n 
+ * @param budget 
+ * @param team_size r
+ * @return Team 
+ */
 Team create_team_dp_topdown(Player *players, int n, int budget, int team_size){
     Team team = init_team();
     //Tabla
@@ -119,6 +137,15 @@ Team create_team_dp_topdown(Player *players, int n, int budget, int team_size){
     return team;
 }
 
+/**
+ * @brief Create a team dp bottomup object
+ * 
+ * @param players 
+ * @param n 
+ * @param budget 
+ * @param team_size 
+ * @return Team 
+ */
 Team create_team_dp_bottomup(Player *players, int n, int budget, int team_size){
     Team team = init_team();
 
@@ -177,7 +204,6 @@ Team create_team_dp_bottomup(Player *players, int n, int budget, int team_size){
 }
 
 /* Estrategias voraces (con restricción de presupuesto) */
-/* #IVAN */
 Team create_team_greedy(Player *players, int n, int budget, int team_size, GreedyStrategy strategy){
     Team team = init_team();
 
@@ -198,9 +224,6 @@ Team create_team_greedy(Player *players, int n, int budget, int team_size, Greed
     }
 
     for(int i = 0; i < n; i++){
-        /*
-        if(team.num_players >= team_size) break;    sin fijar una cantidad exacta de deportistas
-        */
         if (players[i].costo <= budget) {
             add_player_to_team(&team, players[i]);
             budget -= players[i].costo;
@@ -210,9 +233,26 @@ Team create_team_greedy(Player *players, int n, int budget, int team_size, Greed
     return team;
 }
 
-/* Estrategia voraz para escenario sin restricción (selección por score) */
+/**
+ * @brief Create a team greedy unconstrained object
+ * 
+ * @param players 
+ * @param n 
+ * @param team_size 
+ * @return Team 
+ */
 Team create_team_greedy_unconstrained(Player *players, int n, int team_size){
-    /* TODO: implementar */
-    return init_team();
+    Team team = init_team();
+
+    // Ordenamos por score
+    merge_sort_optimized(players, n, 32, compare_score);
+
+    if (team_size > n) team_size = n;
+
+    for(int i = 0; i < team_size; i++){
+        add_player_to_team(&team, players[i]);
+    }
+
+    return team;
 }
 

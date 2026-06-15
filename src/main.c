@@ -14,6 +14,7 @@
 #include "player.h" 
 #include "generate_exec_times.h"
 #include "smoke.h"
+#include "team.h"
 #include "config.h"
 
 
@@ -279,6 +280,8 @@ int main() {
         printf(LIGHT_BLUE "\nOriginal file:\n" RESET);
         print_player_array_more(players, n);
 
+        // 
+
         // seleccionar con o sin restriccion presupuestaria
 
         print_create_team_budget_menu();
@@ -308,23 +311,58 @@ int main() {
 
             if (algorithm_choice == 1) {
                 printf(LIGHT_BLUE "\nUsing DP Top-Down (Memoization).\n" RESET);
-            } else if (algorithm_choice == 2) {
-                printf(LIGHT_BLUE "\nUsing DP Bottom-Up (Tabulation).\n" RESET);
-            } else if (algorithm_choice == 3) {
-                printf(LIGHT_BLUE "\nUsing Greedy (by Score).\n" RESET);
-            } else if (algorithm_choice == 4) {
-                printf(LIGHT_BLUE "\nUsing Greedy (by Score/Cost).\n" RESET);
-            } else {
-                printf(LIGHT_BLUE "\nUsing Greedy (by Lowest Cost).\n" RESET);
+                Team dp_topdown_team = create_team_dp_topdown(players, n, budget, 0);
+                print_team(&dp_topdown_team);
+                free_team(&dp_topdown_team);
             }
-            printf(BG_RED "Team creation is not implemented yet." RESET "\n");
+            else if (algorithm_choice == 2) {
+                printf(LIGHT_BLUE "\nUsing DP Bottom-Up (Tabulation).\n" RESET);
+                Team dp_bottomup_team = create_team_dp_bottomup(players, n, budget, 0);
+                print_team(&dp_bottomup_team);
+                free_team(&dp_bottomup_team);
+            }
+            else if (algorithm_choice == 3) {
+                printf(LIGHT_BLUE "\nUsing Greedy (by Score).\n" RESET);
+                Team greedy_team = create_team_greedy(players, n, budget, 0, GREEDY_BY_SCORE); 
+
+                print_team(&greedy_team);
+
+                free_team(&greedy_team);
+            }
+            else if (algorithm_choice == 4) {
+                printf(LIGHT_BLUE "\nUsing Greedy (by Score/Cost).\n" RESET);
+                Team greedy_team = create_team_greedy(players, n, budget, 0, GREEDY_BY_SCORE_COST);
+
+                print_team(&greedy_team);
+
+                free_team(&greedy_team);
+            }
+            else {
+                printf(LIGHT_BLUE "\nUsing Greedy (by Lowest Cost).\n" RESET);
+                Team greedy_team = create_team_greedy(players, n, budget, 0, GREEDY_BY_LOWEST_COST);
+
+                print_team(&greedy_team);
+
+                free_team(&greedy_team);
+            }
         }
         // sin restriccion de presupuesto
         else {
-            // greedy por score
-            
-            printf(BG_RED "Team creation is not implemented yet." RESET "\n");
-            
+            printf(LIGHT_BLUE "\nUsing Greedy (by Score).\n" RESET);
+
+            // Pedir tamaño del equipo
+            printf(DARK_YELLOW "\nEnter team size: " RESET);
+            int team_size;
+            check = scanf("%d", &team_size);
+            while (check != 1 || team_size <= 0 || team_size > n) {
+                printf(EVEN_DARKER_BLUE"Invalid team size, try again: " DARK_BLUE);
+                while (getchar() != '\n');
+                check = scanf("%d", &team_size);
+            }
+
+            Team greedy_team = create_team_greedy_unconstrained(players, n, team_size);
+            print_team(&greedy_team);
+            free_team(&greedy_team);
         }
         
         free(players);
@@ -342,4 +380,3 @@ int main() {
 }
 
 // MIAU !
-                                                                                

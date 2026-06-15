@@ -98,6 +98,7 @@ void print_create_team_budget_algorithm_menu(){
 }
 
 
+
 void print_goodbye(){
     // 1/2 de probablidad de salir crocodile o aligator
 		if (rand() % 2 == 0) {
