@@ -120,8 +120,60 @@ Team create_team_dp_topdown(Player *players, int n, int budget, int team_size){
 }
 
 Team create_team_dp_bottomup(Player *players, int n, int budget, int team_size){
-    /* TODO: implementar */
-    return init_team();
+    Team team = init_team();
+
+    //Dimensiones de la tabla 
+    int dim_i = n + 1;
+    int dim_b = budget + 1; 
+    long total_size = (long)dim_i * dim_b;
+
+    //Memoria para la tabla 
+    float *dp = (float *)calloc(total_size, sizeof(float));
+
+    if (dp == NULL) {
+        printf("Error: No hay memoria suficiente para DP Bottom-Up.\n");
+        return team;
+    }
+
+    //LLenamos la tabla
+    for (int i = 1; i <= n; i++) {
+        for (int b = 0; b <= budget; b++) {
+            
+            long curr_idx = (long)i * dim_b + b;
+            long prev_idx = (long)(i - 1) * dim_b + b;
+
+            float score_skip = dp[prev_idx];
+            float score_take = -1.0f;
+
+            if (players[i - 1].costo <= b) {
+                long prev_take_idx = (long)(i - 1) * dim_b + (b - players[i - 1].costo);
+                score_take = players[i - 1].score + dp[prev_take_idx];
+            }
+
+            // Tomamos la decisión óptima
+            if (score_take > score_skip) {
+                dp[curr_idx] = score_take;
+            } else {
+                dp[curr_idx] = score_skip;
+            }
+        }
+    }
+
+    //Reconstrucción del equipo seleccionado
+    int curr_b = budget;
+    for (int i = n; i > 0; i--) {
+        long curr_idx = (long)i * dim_b + curr_b;
+        long prev_idx = (long)(i - 1) * dim_b + curr_b;
+
+        if (dp[curr_idx] != dp[prev_idx]) {
+            add_player_to_team(&team, players[i - 1]);
+            curr_b -= players[i - 1].costo; // Descontamos el presupuesto
+        }
+    }
+
+    free(dp);
+
+    return team;
 }
 
 /* Estrategias voraces (con restricción de presupuesto) */
