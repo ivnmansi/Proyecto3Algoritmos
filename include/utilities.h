@@ -69,6 +69,9 @@ void print_create_team_budget_menu();
 void print_create_team_budget_algorithm_menu();
 void print_goodbye();
 
+/* Experiments menu */
+int print_experiments_menu();
+
 
 // !MIRA! el nivel de !INGLES! que posees,
 // searching.c

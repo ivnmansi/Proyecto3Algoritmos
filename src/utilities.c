@@ -97,6 +97,30 @@ void print_create_team_budget_algorithm_menu(){
     printf(DARK_BLUE "Selection: " LIGHT_BLUE);
 }
 
+int print_experiments_menu(){
+    int selection = 0;
+    int check = 0;
+    printf(EVEN_DARKER_BLUE "\n   ╔═══════════════════════════════════════════╗\n");
+    printf(EVEN_DARKER_BLUE "   ║" LIGHT_BLUE "    Experiments Menu                       " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ╠═══════════════════════════════════════════╣\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 1)" LIGHT_BLUE " Run all smoke tests                    " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 2)" LIGHT_BLUE " Sort experiments                       " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 3)" LIGHT_BLUE " Threshold (merge) experiments          " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 4)" LIGHT_BLUE " Search experiments                     " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 5)" LIGHT_BLUE " Select (quickselect) experiments       " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 6)" LIGHT_BLUE " Team experiments (budget-constrained)  " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ║" DARK_BLUE " 7)" LIGHT_BLUE " Team experiments (no-budget / exact-K) " EVEN_DARKER_BLUE "║\n");
+    printf(EVEN_DARKER_BLUE "   ╚═══════════════════════════════════════════╝\n");
+    printf(DARK_GRAY "Selection: " RESET);
+    check = scanf("%d", &selection);
+    while (check != 1 || selection < 1 || selection > 7) {
+        printf(DARK_GRAY "Invalid option, try again: " RESET);
+        while (getchar() != '\n');
+        check = scanf("%d", &selection);
+    }
+    return selection;
+}
+
 
 
 void print_goodbye(){

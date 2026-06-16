@@ -368,9 +368,10 @@ int main() {
         free(players);
     }
 
-	else if (option == 6) { // Opcion 6: Ejecutar experimento
-        run_smoke_tests();
-	}
+    else if (option == 6) { // Opcion 6: Ejecutar experimento
+        int sel = print_experiments_menu();
+        run_smoke_tests(sel);
+    }
 
 	else if (option == 7) { // Opcion 7: Salir del programa
         print_goodbye();

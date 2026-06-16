@@ -7,14 +7,16 @@
 
 extern SortAlgorithmFlag current_active_flags;
 
-static void generate_case_csv(int generation_type, const char* destination_file)
+static int generate_case_csv(int generation_type, const char* destination_file)
 {
-    if (generate_csv(50000, generation_type) == 0) {
-        rename(CSV_FILE, destination_file);
+    if (generate_csv(10000, generation_type) == 0) {
+        if (rename(CSV_FILE, destination_file) == 0) return 0;
+        return -2; /* rename failed */
     }
+    return -1; /* generation failed */
 }
 
-void run_smoke_tests() {
+void run_smoke_tests(int selection) {
     printf("\n" "\033[0;35m" "=== STARTING SMOKE TESTS ===" "\033[0m" "\n");
 
     set_generator_quiet(1);
@@ -24,61 +26,56 @@ void run_smoke_tests() {
     /* Todos los algoritmos activos por defecto, incluyendo los de Tarea 1 */
     current_active_flags = FLAG_ALL_SORTS;
     
-    printf("1) Generando conjuntos de datos (Sorted, Inverted, Shuffled 50000 n)...\n");
-    generate_case_csv(1, CSV_DIR "players_sorted.csv");
-    generate_case_csv(2, CSV_DIR "players_inverted.csv");
-    generate_case_csv(3, CSV_DIR "players_shuffled.csv");
-
     printf("Guardando informacion del equipo...\n");
     system("mkdir -p docs/results");
     system("uname -a > docs/results/system_info.txt");
     system("lscpu >> docs/results/system_info.txt");
 
-    /* ============================================
-     * EXPERIMENTO 1: ORDENAMIENTO (los 10 algoritmos)
-     * Genera 3 CSVs: sort_best, sort_worst, sort_average
-     * ============================================ */
-    printf("\n" "\033[44m" "--- Exp 1: Ordenamiento ---" "\033[0m" "\n");
-    printf("\n-> Exp 1 (Best/Worst/Average) en progreso...\n");
-    run_sort_experiments(
-        CSV_DIR "players_sorted.csv",
-        CSV_DIR "players_inverted.csv",
-        CSV_DIR "players_shuffled.csv",
-        CSV_DIR "sort"
-    );
+    /* Decide qué experimento(s) ejecutar según selection
+     * 1 = all, 2 = sort, 3 = threshold, 4 = search, 5 = select,
+     * 6 = team (budget), 7 = team (no-budget)
+     */
+    if (selection == 1 || selection == 2) {
+        printf("\n" "\033[44m" "--- Exp: Ordenamiento ---" "\033[0m" "\n");
+        if (generate_case_csv(1, PLAYERS_SORTED_FILE) == 0 && generate_case_csv(2, PLAYERS_INVERTED_FILE) == 0 && generate_case_csv(3, PLAYERS_SHUFFLED_FILE) == 0) {
+            run_sort_experiments(PLAYERS_SORTED_FILE, PLAYERS_INVERTED_FILE, PLAYERS_SHUFFLED_FILE, SORT_EXPERIMENT_PREFIX);
+        }
+    }
 
-    /* ============================================
-     * EXPERIMENTO 2: THRESHOLD MERGE SORT
-     * Genera 3 CSVs: threshold_best, threshold_worst, threshold_average
-     * ============================================ */
-    printf("\n" "\033[44m" "--- Exp 2: Threshold de optimizacion ---" "\033[0m" "\n");
-    printf("\n-> Exp 2 (Best/Worst/Average) en progreso...\n");
-    run_threshold_experiments(
-        CSV_DIR "players_sorted.csv",
-        CSV_DIR "players_inverted.csv",
-        CSV_DIR "players_shuffled.csv",
-        CSV_DIR "threshold"
-    );
+    if (selection == 1 || selection == 3) {
+        printf("\n" "\033[44m" "--- Exp: Threshold Merge ---" "\033[0m" "\n");
+        if (generate_case_csv(1, PLAYERS_SORTED_FILE) == 0 && generate_case_csv(2, PLAYERS_INVERTED_FILE) == 0 && generate_case_csv(3, PLAYERS_SHUFFLED_FILE) == 0) {
+            run_threshold_experiments(PLAYERS_SORTED_FILE, PLAYERS_INVERTED_FILE, PLAYERS_SHUFFLED_FILE, THRESHOLD_EXPERIMENT_PREFIX);
+        }
+    }
 
-    /* ============================================
-     * EXPERIMENTO 3: BUSQUEDAS
-     * Genera 2 CSVs: search_average, search_worst
-     * ============================================ */
-    printf("\n" "\033[44m" "--- Exp 3: Busqueda ---" "\033[0m" "\n");
-    printf("\n-> Exp 3 (Average/Worst) en progreso...\n");
-    run_search_experiments(CSV_DIR "players_sorted.csv", CSV_DIR "search");
+    if (selection == 1 || selection == 4) {
+        printf("\n" "\033[44m" "--- Exp: Busqueda ---" "\033[0m" "\n");
+        if (generate_case_csv(1, PLAYERS_SORTED_FILE) == 0) {
+            run_search_experiments(PLAYERS_SORTED_FILE, SEARCH_EXPERIMENT_PREFIX);
+        }
+    }
 
-    /* ============================================
-     * EXPERIMENTO 4: SELECCION QUICK SELECT
-     * Genera 2 CSVs: select_best, select_worst
-     * ============================================ */
-    printf("\n" "\033[44m" "--- Exp 4: Seleccion ---" "\033[0m" "\n");
-    printf("\n-> Exp 4 (Best/Worst) en progreso...\n");
-    run_select_experiments(
-        CSV_DIR "players_sorted.csv",
-        CSV_DIR "players_shuffled.csv",
-        CSV_DIR "select"
-    );
+    if (selection == 1 || selection == 5) {
+        printf("\n" "\033[44m" "--- Exp: Select ---" "\033[0m" "\n");
+        if (generate_case_csv(1, PLAYERS_SORTED_FILE) == 0 && generate_case_csv(3, PLAYERS_SHUFFLED_FILE) == 0) {
+            run_select_experiments(PLAYERS_SORTED_FILE, PLAYERS_SHUFFLED_FILE, SELECT_EXPERIMENT_PREFIX);
+        }
+    }
+
+    if (selection == 1 || selection == 6) {
+        printf("\n" "\033[44m" "--- Exp: Team (budget) ---" "\033[0m" "\n");
+        if (generate_case_csv(3, PLAYERS_SHUFFLED_FILE) == 0) {
+            run_team_experiment(PLAYERS_SHUFFLED_FILE, TEAM_EXPERIMENT_PREFIX, 1);
+        }
+    }
+
+    if (selection == 1 || selection == 7) {
+        printf("\n" "\033[44m" "--- Exp: Team (no-budget) ---" "\033[0m" "\n");
+        if (generate_case_csv(3, PLAYERS_SHUFFLED_FILE) == 0) {
+            run_team_experiment(PLAYERS_SHUFFLED_FILE, TEAM_UNCONSTRAINED_EXPERIMENT_PREFIX, 0);
+        }
+    }
 
     /* Restaurar estado */
     current_active_flags = FLAG_ALL_SORTS;

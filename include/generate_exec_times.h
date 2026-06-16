@@ -58,6 +58,10 @@ void run_threshold_experiment(const char* target_file, const char* out_filename,
 void run_experiment(const char* target_file, const char* out_filename, int is_average_case);
 void run_search_experiment(const char* target_file, const char* out_filename, int is_worst_case);
 void run_select_experiment(const char* target_file, const char* out_filename, int is_worst_case);
+
+void run_team_experiment(const char* target_file, const char* out_filename, int is_constrained);
+
+
 void run_sort_experiments(const char* sorted_file, const char* inverted_file, const char* shuffled_file, const char* out_prefix);
 void run_threshold_experiments(const char* sorted_file, const char* inverted_file, const char* shuffled_file, const char* out_prefix);
 void run_search_experiments(const char* sorted_file, const char* out_prefix);

@@ -10,6 +10,8 @@
 #include <string.h>
 #include "generate_exec_times.h"
 #include "utilities.h"
+#include "team.h"
+#include "config.h"
 
 SortAlgorithmFlag current_active_flags = FLAG_ALL_SORTS;
 static int experiment_quiet = 0;
@@ -37,6 +39,33 @@ static void shuffle_players(Player *arr, int n) {
         arr[i] = arr[j];
         arr[j] = tmp;
     }
+}
+
+static double team_total_score(const Team *team)
+{
+    double total = 0.0;
+
+    for (int i = 0; i < team->num_players; i++) {
+        total += team->players[i].score;
+    }
+
+    return total;
+}
+
+static int total_cost_for_prefix(const Player *players, int n)
+{
+    int total = 0;
+
+    for (int i = 0; i < n; i++) {
+        total += players[i].costo;
+    }
+
+    return total;
+}
+
+static void copy_prefix(Player *dst, const Player *src, int n)
+{
+    memcpy(dst, src, (size_t)n * sizeof(Player));
 }
 
 /* ------------------------------------------------------------------ */
@@ -379,6 +408,185 @@ void run_select_experiment(const char* target_file, const char* out_filename, in
     if (!experiment_quiet) printf("Select experiment saved in %s\n", out_filename);
 }
 
+/**
+ * @brief 
+ * 
+ * @param target_file 
+ * @param out_filename 
+ */
+void run_team_experiment(const char* target_file, const char* out_filename, int is_constrained)
+{
+    int n = 0;
+    Player *players;
+    if ((players = load_players((char*)target_file, &n)) == NULL) {
+        return;
+    }
+
+    Player *buf = malloc((size_t)n * sizeof(Player));
+    Player *working = malloc((size_t)n * sizeof(Player));
+    if (buf == NULL || working == NULL) {
+        print_error(102, "players", NULL);
+        free(players);
+        free(buf);
+        free(working);
+        return;
+    }
+    memcpy(working, players, (size_t)n * sizeof(Player));
+
+    char out_file[256];
+    snprintf(out_file, sizeof(out_file), "%s_experiment.csv", out_filename);
+    FILE *csv = fopen(out_file, "w");
+    if (csv == NULL) {
+        print_error(101, out_file, NULL);
+        free(players);
+        free(buf);
+        free(working);
+        return;
+    }
+
+
+    fprintf(csv,
+            "N,Budget,K,DP_TopDown_s,DP_BottomUp_s,Greedy_Score_s,Greedy_ScoreCost_s,"
+            "Greedy_LowestCost_s,Greedy_Unconstrained_s,DP_TopDown_score,DP_BottomUp_score,"
+            "Greedy_Score_score,Greedy_ScoreCost_score,Greedy_LowestCost_score,Greedy_Unconstrained_score\n");
+
+    const int num_points = NUM_STEPS;
+    const int repetitions = NUM_AVG_RUNS;
+
+    for (int s = 0; s < num_points; s++) {
+        int k = (num_points == 1) ? n : 1 + (s * (n - 1)) / (num_points - 1);
+        if (k > n) k = n;
+        if (k <= 0) continue;
+
+        int outer_runs = is_constrained ? repetitions : 1;
+
+        double t_dp_topdown = 0.0;
+        double t_dp_bottomup = 0.0;
+        double t_greedy_score = 0.0;
+        double t_greedy_score_cost = 0.0;
+        double t_greedy_lowest_cost = 0.0;
+        double t_greedy_unconstrained = 0.0;
+
+        double score_dp_topdown = 0.0;
+        double score_dp_bottomup = 0.0;
+        double score_greedy_score = 0.0;
+        double score_greedy_score_cost = 0.0;
+        double score_greedy_lowest_cost = 0.0;
+        double score_greedy_unconstrained = 0.0;
+
+        int total_cost = total_cost_for_prefix(working, k);
+        int budget = 0;
+        if (is_constrained) {
+            /* Budgeted experiment: use fixed budget from config */
+            budget = TEAM_FIXED_BUDGET;
+        } else {
+            int budget_ratio = 2;
+            budget = total_cost / budget_ratio;
+            if (budget < 1) budget = 1;
+        }
+        if (budget > TEAM_FIXED_BUDGET) budget = TEAM_FIXED_BUDGET;
+
+        int team_size = 0;
+        if (!is_constrained) {
+            team_size = (3 * k) / 4;
+            if (team_size < 1) team_size = 1;
+            if (team_size > k) team_size = k;
+        }
+
+        for (int run = 0; run < outer_runs; run++) {
+            if (is_constrained && run > 0) {
+                shuffle_players(working, n);
+            }
+
+            struct timespec t0, t1;
+
+            copy_prefix(buf, working, k);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            Team team = create_team_dp_topdown(buf, k, budget, 0);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_dp_topdown += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_dp_topdown = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, k);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_dp_bottomup(buf, k, budget, 0);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_dp_bottomup += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_dp_bottomup = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, k);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, k, budget, 0, GREEDY_BY_SCORE);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_score += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_score = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, k);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, k, budget, 0, GREEDY_BY_SCORE_COST);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_score_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_score_cost = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, k);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, k, budget, 0, GREEDY_BY_LOWEST_COST);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_lowest_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_lowest_cost = team_total_score(&team);
+            free_team(&team);
+
+            if (!is_constrained) {
+                copy_prefix(buf, working, k);
+                clock_gettime(CLOCK_MONOTONIC, &t0);
+                team = create_team_greedy_unconstrained(buf, k, team_size);
+                clock_gettime(CLOCK_MONOTONIC, &t1);
+                t_greedy_unconstrained += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+                if (run == 0) score_greedy_unconstrained = team_total_score(&team);
+                free_team(&team);
+            }
+        }
+
+        t_dp_topdown /= outer_runs;
+        t_dp_bottomup /= outer_runs;
+        t_greedy_score /= outer_runs;
+        t_greedy_score_cost /= outer_runs;
+        t_greedy_lowest_cost /= outer_runs;
+        t_greedy_unconstrained /= outer_runs;
+
+        if (!experiment_quiet) {
+            printf(PURPLE "║" MAGENTA " Procesando n =\t" WHITE " %8d" PURPLE "                             ║\n", k);
+            printf(PURPLE "║" LIGHT_BLUE " Budget:\t\t" WHITE " %8d" PURPLE "                             ║\n", budget);
+            if (is_constrained) {
+                printf(PURPLE "║" LIGHT_BLUE " Team size:" WHITE " %6d" PURPLE "                                      ║\n", team_size);
+            }
+        }
+
+        fprintf(csv, "%d,%d,%d,%.9f,%.9f,%.9f,%.9f,%.9f,%.9f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
+                k,
+                budget,
+                team_size,
+                t_dp_topdown, t_dp_bottomup, t_greedy_score, t_greedy_score_cost,
+                t_greedy_lowest_cost, t_greedy_unconstrained,
+                score_dp_topdown, score_dp_bottomup, score_greedy_score,
+                score_greedy_score_cost, score_greedy_lowest_cost,
+                score_greedy_unconstrained);
+    }
+
+        if (!experiment_quiet) {
+            printf("Team experiment saved in %s\n", out_file);
+        }
+
+    fclose(csv);
+    free(players);
+    free(buf);
+    free(working);
+}
+
 /* ------------------------------------------------------------------ */
 /* Orquestadores                                                      */
 /* ------------------------------------------------------------------ */
@@ -437,3 +645,5 @@ void run_select_experiments(const char* sorted_file, const char* shuffled_file, 
     snprintf(out_file, sizeof(out_file), "%s_worst_experiment.csv", out_prefix);
     run_select_experiment(sorted_file, out_file, 1);
 }
+
+
