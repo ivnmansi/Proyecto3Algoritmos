@@ -95,7 +95,7 @@ static float dp_topdown_rec_2d(int i, int b, Player *players, int n, float *memo
  * @param team_size r
  * @return Team 
  */
-Team create_team_dp_topdown(Player *players, int n, int budget, int team_size){
+Team create_team_dp_topdown(Player *players, int n, int budget){
     Team team = init_team();
     //Tabla
     int dim_i = n;
@@ -146,7 +146,7 @@ Team create_team_dp_topdown(Player *players, int n, int budget, int team_size){
  * @param team_size 
  * @return Team 
  */
-Team create_team_dp_bottomup(Player *players, int n, int budget, int team_size){
+Team create_team_dp_bottomup(Player *players, int n, int budget){
     Team team = init_team();
 
     //Dimensiones de la tabla 
@@ -204,7 +204,7 @@ Team create_team_dp_bottomup(Player *players, int n, int budget, int team_size){
 }
 
 /* Estrategias voraces (con restricción de presupuesto) */
-Team create_team_greedy(Player *players, int n, int budget, int team_size, GreedyStrategy strategy){
+Team create_team_greedy(Player *players, int n, int budget, GreedyStrategy strategy){
     Team team = init_team();
 
     // ordenar según estrategia

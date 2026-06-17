@@ -22,12 +22,12 @@ void print_team(const Team* team);
 
 /* Algoritmos para conformar equipos */
 /* #ANDRES */
-Team create_team_dp_topdown(Player *players, int n, int budget, int team_size);
-Team create_team_dp_bottomup(Player *players, int n, int budget, int team_size);
+Team create_team_dp_topdown(Player *players, int n, int budget);
+Team create_team_dp_bottomup(Player *players, int n, int budget);
 
 /* Estrategias voraces (con restricción de presupuesto) */
 /* #IVAN */
-Team create_team_greedy(Player *players, int n, int budget, int team_size, GreedyStrategy strategy);
+Team create_team_greedy(Player *players, int n, int budget, GreedyStrategy strategy);
 
 /* Estrategia voraz para escenario sin restricción (selección por score) */
 Team create_team_greedy_unconstrained(Player *players, int n, int team_size);

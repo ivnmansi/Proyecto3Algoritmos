@@ -24,5 +24,7 @@
 #define COST_MAX 10000
 
 #define TEAM_FIXED_BUDGET 4000
+#define TEAM_FIXED_K 100
+#define TEAM_FIXED_N 1000
 
 #endif

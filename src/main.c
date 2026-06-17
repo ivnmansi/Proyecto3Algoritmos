@@ -311,19 +311,19 @@ int main() {
 
             if (algorithm_choice == 1) {
                 printf(LIGHT_BLUE "\nUsing DP Top-Down (Memoization).\n" RESET);
-                Team dp_topdown_team = create_team_dp_topdown(players, n, budget, 0);
+                Team dp_topdown_team = create_team_dp_topdown(players, n, budget);
                 print_team(&dp_topdown_team);
                 free_team(&dp_topdown_team);
             }
             else if (algorithm_choice == 2) {
                 printf(LIGHT_BLUE "\nUsing DP Bottom-Up (Tabulation).\n" RESET);
-                Team dp_bottomup_team = create_team_dp_bottomup(players, n, budget, 0);
+                Team dp_bottomup_team = create_team_dp_bottomup(players, n, budget);
                 print_team(&dp_bottomup_team);
                 free_team(&dp_bottomup_team);
             }
             else if (algorithm_choice == 3) {
                 printf(LIGHT_BLUE "\nUsing Greedy (by Score).\n" RESET);
-                Team greedy_team = create_team_greedy(players, n, budget, 0, GREEDY_BY_SCORE); 
+                Team greedy_team = create_team_greedy(players, n, budget, GREEDY_BY_SCORE); 
 
                 print_team(&greedy_team);
 
@@ -331,7 +331,7 @@ int main() {
             }
             else if (algorithm_choice == 4) {
                 printf(LIGHT_BLUE "\nUsing Greedy (by Score/Cost).\n" RESET);
-                Team greedy_team = create_team_greedy(players, n, budget, 0, GREEDY_BY_SCORE_COST);
+                Team greedy_team = create_team_greedy(players, n, budget, GREEDY_BY_SCORE_COST);
 
                 print_team(&greedy_team);
 
@@ -339,7 +339,7 @@ int main() {
             }
             else {
                 printf(LIGHT_BLUE "\nUsing Greedy (by Lowest Cost).\n" RESET);
-                Team greedy_team = create_team_greedy(players, n, budget, 0, GREEDY_BY_LOWEST_COST);
+                Team greedy_team = create_team_greedy(players, n, budget, GREEDY_BY_LOWEST_COST);
 
                 print_team(&greedy_team);
 

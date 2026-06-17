@@ -52,17 +52,6 @@ static double team_total_score(const Team *team)
     return total;
 }
 
-static int total_cost_for_prefix(const Player *players, int n)
-{
-    int total = 0;
-
-    for (int i = 0; i < n; i++) {
-        total += players[i].costo;
-    }
-
-    return total;
-}
-
 static void copy_prefix(Player *dst, const Player *src, int n)
 {
     memcpy(dst, src, (size_t)n * sizeof(Player));
@@ -87,7 +76,6 @@ void run_experiment(const char* target_file, const char* out_filename, int is_av
         if (experiment_show_samples) print_player_array(players, n);
     }
 
-    const int num_points = NUM_STEPS;
     const int outer_runs = is_average_case ? NUM_AVG_RUNS : 1;
 
     /* Buffers reutilizables */
@@ -116,8 +104,8 @@ void run_experiment(const char* target_file, const char* out_filename, int is_av
     }
 
     /* Acumuladores por algoritmo (suma sobre outer_runs) */
-    for (int s = 0; s < num_points; s++) {
-        int k = (num_points == 1) ? n : 1 + (s * (n - 1)) / (num_points - 1);
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int k = (NUM_STEPS == 1) ? n : 1 + (s * (n - 1)) / (NUM_STEPS - 1);
 
         double accSwap = 0, accIns = 0, accSel = 0, accCock = 0;
         double accMergeClas = 0, accMerge16 = 0;
@@ -125,7 +113,7 @@ void run_experiment(const char* target_file, const char* out_filename, int is_av
 
         if (!experiment_quiet) {
             printf(PURPLE "║" MAGENTA " Procesando n =" WHITE " %8d" PURPLE "                             ║\n", k);
-            printf(PURPLE "║" MAGENTA " Paso:" WHITE " %4d/%4d" PURPLE "                                     ║\n", s + 1, num_points);
+            printf(PURPLE "║" MAGENTA " Paso:" WHITE " %4d/%4d" PURPLE "                                     ║\n", s + 1, NUM_STEPS);
         }
 
         for (int run = 0; run < outer_runs; run++) {
@@ -216,7 +204,6 @@ void run_threshold_experiment(const char* target_file, const char* out_filename,
         printf("Arreglo de jugadores cargado desde %s\n", target_file);
     }
 
-    const int num_points = NUM_STEPS;
     const int outer_runs = is_average_case ? NUM_AVG_RUNS : 1;
 
     const int thresholds[] = {2, 4, 8, 16, 32, 64, 128};
@@ -245,12 +232,12 @@ void run_threshold_experiment(const char* target_file, const char* out_filename,
         printf(PURPLE "╔══════════════════════════════════════════════════════╗\n");
     }
 
-    for (int s = 0; s < num_points; s++) {
-        int k = (num_points == 1) ? n : 1 + (s * (n - 1)) / (num_points - 1);
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int k = (NUM_STEPS == 1) ? n : 1 + (s * (n - 1)) / (NUM_STEPS - 1);
 
         if (!experiment_quiet) {
             printf(PURPLE "║" MAGENTA " Procesando n =" WHITE " %8d" PURPLE "                             ║\n", k);
-            printf(PURPLE "║" MAGENTA " Paso:" WHITE " %4d/%4d" PURPLE "                                     ║\n", s + 1, num_points);
+            printf(PURPLE "║" MAGENTA " Paso:" WHITE " %4d/%4d" PURPLE "                                     ║\n", s + 1, NUM_STEPS);
         }
 
         double acc[7] = {0};
@@ -313,7 +300,6 @@ void run_search_experiment(const char* target_file, const char* out_filename, in
         printf("Arreglo de jugadores cargado desde %s para busqueda\n", target_file);
     }
 
-    const int num_points = NUM_STEPS;
     FILE *csv = fopen(out_filename, "w");
     if (csv == NULL) { free(players); return; }
 
@@ -321,8 +307,8 @@ void run_search_experiment(const char* target_file, const char* out_filename, in
 
     const int reps = 1000;
 
-    for (int s = 0; s < num_points; s++) {
-        int k = (num_points == 1) ? n : 1 + (s * (n - 1)) / (num_points - 1);
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int k = (NUM_STEPS == 1) ? n : 1 + (s * (n - 1)) / (NUM_STEPS - 1);
 
         double tBinRec = 0, tBinRan = 0, tExp = 0, tInt = 0;
 
@@ -378,15 +364,14 @@ void run_select_experiment(const char* target_file, const char* out_filename, in
     Player* players;
     if ((players = load_players((char*)target_file, &n)) == NULL) return;
 
-    const int num_points = NUM_STEPS;
     FILE *csv = fopen(out_filename, "w");
     if (csv == NULL) { free(players); return; }
 
     fprintf(csv, "N,Quick Select\n");
 
     Player* arr = malloc(n * sizeof(Player));
-    for (int s = 0; s < num_points; s++) {
-        int k = (num_points == 1) ? n : 1 + (s * (n - 1)) / (num_points - 1);
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int k = (NUM_STEPS == 1) ? n : 1 + (s * (n - 1)) / (NUM_STEPS - 1);
         double tSel = 0;
 
         int k_target = is_worst_case ? 0 : k / 2;
@@ -408,12 +393,235 @@ void run_select_experiment(const char* target_file, const char* out_filename, in
     if (!experiment_quiet) printf("Select experiment saved in %s\n", out_filename);
 }
 
-/**
- * @brief 
- * 
- * @param target_file 
- * @param out_filename 
+/** -----------------------
+ *  TEAM EXPERIMENTS
+ * ------------------------ 
  */
+/* ---------------- CONSTRAINED: variar N, budget fijo ---------------- */
+static void run_constrained_vary_n(Player *working, Player *buf, int n_players, FILE *csv){
+
+    fprintf(csv,
+            "N,Budget,DP_TopDown_s,DP_BottomUp_s,Greedy_Score_s,Greedy_ScoreCost_s,"
+            "Greedy_LowestCost_s,DP_TopDown_score,DP_BottomUp_score,"
+            "Greedy_Score_score,Greedy_ScoreCost_score,Greedy_LowestCost_score\n");
+
+    int budget = TEAM_FIXED_BUDGET;
+
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int n = (NUM_STEPS == 1) ? n_players : 1 + (s * (n_players - 1)) / (NUM_STEPS - 1);
+
+        double t_dp_topdown = 0.0, t_dp_bottomup = 0.0;
+        double t_greedy_score = 0.0, t_greedy_score_cost = 0.0, t_greedy_lowest_cost = 0.0;
+        double score_dp_topdown = 0.0, score_dp_bottomup = 0.0;
+        double score_greedy_score = 0.0, score_greedy_score_cost = 0.0, score_greedy_lowest_cost = 0.0;
+
+        for (int run = 0; run < NUM_AVG_RUNS; run++) {
+            if (run > 0) shuffle_players(working, n);
+
+            struct timespec t0, t1;
+
+            copy_prefix(buf, working, n);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            Team team = create_team_dp_topdown(buf, n, budget);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_dp_topdown += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_dp_topdown = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, n);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_dp_bottomup(buf, n, budget);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_dp_bottomup += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_dp_bottomup = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, n);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, n, budget, GREEDY_BY_SCORE);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_score += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_score = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, n);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, n, budget, GREEDY_BY_SCORE_COST);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_score_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_score_cost = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, n);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, n, budget, GREEDY_BY_LOWEST_COST);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_lowest_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_lowest_cost = team_total_score(&team);
+            free_team(&team);
+        }
+
+        t_dp_topdown /= NUM_AVG_RUNS;
+        t_dp_bottomup /= NUM_AVG_RUNS;
+        t_greedy_score /= NUM_AVG_RUNS;
+        t_greedy_score_cost /= NUM_AVG_RUNS;
+        t_greedy_lowest_cost /= NUM_AVG_RUNS;
+
+        if (!experiment_quiet) {
+            printf(PURPLE "║" MAGENTA " [vs N] N = \t\t" WHITE " %d" PURPLE "\t║\n", n);
+            printf(PURPLE "║" LIGHT_BLUE " Budget (fijo) = \t " WHITE " %d" PURPLE "\t║\n", budget);
+        }
+
+        fprintf(csv, "%d,%d,%.9f,%.9f,%.9f,%.9f,%.9f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
+                n, budget,
+                t_dp_topdown, t_dp_bottomup, t_greedy_score, t_greedy_score_cost, t_greedy_lowest_cost,
+                score_dp_topdown, score_dp_bottomup, score_greedy_score,
+                score_greedy_score_cost, score_greedy_lowest_cost);
+    }
+}
+
+/* ---------------- CONSTRAINED: variar Budget, N fijo (todo el dataset) ---------------- */
+static void run_constrained_vary_budget(Player *working, Player *buf, FILE *csv){
+
+    fprintf(csv,
+            "N,Budget,DP_TopDown_s,DP_BottomUp_s,Greedy_Score_s,Greedy_ScoreCost_s,"
+            "Greedy_LowestCost_s,DP_TopDown_score,DP_BottomUp_score,"
+            "Greedy_Score_score,Greedy_ScoreCost_score,Greedy_LowestCost_score\n");
+
+
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int budget = (COST_MAX / NUM_STEPS) * s + 10;
+
+        double t_dp_topdown = 0.0, t_dp_bottomup = 0.0;
+        double t_greedy_score = 0.0, t_greedy_score_cost = 0.0, t_greedy_lowest_cost = 0.0;
+        double score_dp_topdown = 0.0, score_dp_bottomup = 0.0;
+        double score_greedy_score = 0.0, score_greedy_score_cost = 0.0, score_greedy_lowest_cost = 0.0;
+
+        for (int run = 0; run < NUM_AVG_RUNS; run++) {
+            if (run > 0) shuffle_players(working, TEAM_FIXED_N);
+
+            struct timespec t0, t1;
+
+            copy_prefix(buf, working, TEAM_FIXED_K);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            Team team = create_team_dp_topdown(buf, TEAM_FIXED_N, budget);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_dp_topdown += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_dp_topdown = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, TEAM_FIXED_N);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_dp_bottomup(buf, TEAM_FIXED_N, budget);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_dp_bottomup += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_dp_bottomup = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, TEAM_FIXED_K);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, TEAM_FIXED_N, budget, GREEDY_BY_SCORE);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_score += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_score = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, TEAM_FIXED_N);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, TEAM_FIXED_N, budget, GREEDY_BY_SCORE_COST);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_score_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_score_cost = team_total_score(&team);
+            free_team(&team);
+
+            copy_prefix(buf, working, TEAM_FIXED_N);
+            clock_gettime(CLOCK_MONOTONIC, &t0);
+            team = create_team_greedy(buf, TEAM_FIXED_N, budget, GREEDY_BY_LOWEST_COST);
+            clock_gettime(CLOCK_MONOTONIC, &t1);
+            t_greedy_lowest_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+            if (run == 0) score_greedy_lowest_cost = team_total_score(&team);
+            free_team(&team);
+        }
+
+        t_dp_topdown /= NUM_AVG_RUNS;
+        t_dp_bottomup /= NUM_AVG_RUNS;
+        t_greedy_score /= NUM_AVG_RUNS;
+        t_greedy_score_cost /= NUM_AVG_RUNS;
+        t_greedy_lowest_cost /= NUM_AVG_RUNS;
+
+        if (!experiment_quiet) {
+            printf(PURPLE "║" MAGENTA " [vs Budget] Budget =\t" WHITE " %8d" PURPLE "                  ║\n", budget);
+            printf(PURPLE "║" LIGHT_BLUE " N (fijo):\t\t" WHITE " %8d" PURPLE "                       ║\n", TEAM_FIXED_N);
+        }
+
+        fprintf(csv, "%d,%d,%.9f,%.9f,%.9f,%.9f,%.9f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
+                TEAM_FIXED_N, budget,
+                t_dp_topdown, t_dp_bottomup, t_greedy_score, t_greedy_score_cost, t_greedy_lowest_cost,
+                score_dp_topdown, score_dp_bottomup, score_greedy_score,
+                score_greedy_score_cost, score_greedy_lowest_cost);
+    }
+}
+
+
+static void run_unconstrained_vary_n(Player *working, Player *buf, int n_players, FILE *csv){
+
+    fprintf(csv, "N,K,Greedy_Unconstrained_s,Greedy_Unconstrained_score\n");
+
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int n = (NUM_STEPS == 1) ? n_players : 1 + (s * (n_players - 1)) / (NUM_STEPS - 1);
+
+        copy_prefix(buf, working, n);
+
+        struct timespec t0, t1;
+        clock_gettime(CLOCK_MONOTONIC, &t0);
+        Team team = create_team_greedy_unconstrained(buf, n, TEAM_FIXED_K);
+        clock_gettime(CLOCK_MONOTONIC, &t1);
+        double t_greedy = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+        double score_greedy = team_total_score(&team);
+        free_team(&team);
+
+        if (!experiment_quiet) {
+            printf(PURPLE "║" MAGENTA " [vs N] N =\t" WHITE " %8d" PURPLE "                             ║\n", n);
+            printf(PURPLE "║" LIGHT_BLUE " K (team size):\t" WHITE " %8d" PURPLE "                       ║\n", TEAM_FIXED_K);
+        }
+
+        fprintf(csv, "%d,%d,%.9f,%.3f\n", n, TEAM_FIXED_K, t_greedy, score_greedy);
+    }
+}
+
+/**
+ * @brief SIN BUDGET, N FIJO, K VARIABLE
+ */
+static void run_unconstrained_vary_k(Player *working, Player *buf, int n, FILE *csv){
+
+    fprintf(csv, "N,K,Greedy_Unconstrained_s,Greedy_Unconstrained_score\n");
+
+    int k_input = n;
+
+    for (int s = 0; s < NUM_STEPS; s++) {
+        int team_size = (NUM_STEPS == 1) ? k_input : 1 + (s * (k_input - 1)) / (NUM_STEPS - 1);
+        if (team_size > k_input) team_size = k_input;
+        if (team_size <= 0) continue;
+
+        copy_prefix(buf, working, k_input);
+
+        struct timespec t0, t1;
+        clock_gettime(CLOCK_MONOTONIC, &t0);
+        Team team = create_team_greedy_unconstrained(buf, k_input, team_size);
+        clock_gettime(CLOCK_MONOTONIC, &t1);
+        double t_greedy = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+        double score_greedy = team_total_score(&team);
+        free_team(&team);
+
+        if (!experiment_quiet) {
+            printf(PURPLE "║" MAGENTA " [vs K] K =\t" WHITE " %2d" PURPLE "\t\t║\n", team_size);
+            printf(PURPLE "║" LIGHT_BLUE " N (fijo):\t\t" WHITE " %2d" PURPLE "\t\t║\n", k_input);
+        }
+
+        fprintf(csv, "%d,%d,%.9f,%.3f\n", k_input, team_size, t_greedy, score_greedy);
+    }
+}
+
 void run_team_experiment(const char* target_file, const char* out_filename, int is_constrained)
 {
     int n = 0;
@@ -433,155 +641,54 @@ void run_team_experiment(const char* target_file, const char* out_filename, int 
     }
     memcpy(working, players, (size_t)n * sizeof(Player));
 
-    char out_file[256];
-    snprintf(out_file, sizeof(out_file), "%s_experiment.csv", out_filename);
-    FILE *csv = fopen(out_file, "w");
-    if (csv == NULL) {
-        print_error(101, out_file, NULL);
-        free(players);
-        free(buf);
-        free(working);
+    char out_file_a[256];
+    char out_file_b[256];
+
+    if (is_constrained) {
+        snprintf(out_file_a, sizeof(out_file_a), "%s_vs_n_experiment.csv", out_filename);
+        snprintf(out_file_b, sizeof(out_file_b), "%s_vs_budget_experiment.csv", out_filename);
+    }
+    else {
+        snprintf(out_file_a, sizeof(out_file_a), "%s_vs_n_experiment.csv", out_filename);
+        snprintf(out_file_b, sizeof(out_file_b), "%s_vs_k_experiment.csv", out_filename);
+    }
+
+    FILE *csv_a = fopen(out_file_a, "w");
+    if (csv_a == NULL) {
+        print_error(101, out_file_a, NULL);
+        free(players); free(buf); free(working);
         return;
     }
 
-
-    fprintf(csv,
-            "N,Budget,K,DP_TopDown_s,DP_BottomUp_s,Greedy_Score_s,Greedy_ScoreCost_s,"
-            "Greedy_LowestCost_s,Greedy_Unconstrained_s,DP_TopDown_score,DP_BottomUp_score,"
-            "Greedy_Score_score,Greedy_ScoreCost_score,Greedy_LowestCost_score,Greedy_Unconstrained_score\n");
-
-    const int num_points = NUM_STEPS;
-    const int repetitions = NUM_AVG_RUNS;
-
-    for (int s = 0; s < num_points; s++) {
-        int k = (num_points == 1) ? n : 1 + (s * (n - 1)) / (num_points - 1);
-        if (k > n) k = n;
-        if (k <= 0) continue;
-
-        int outer_runs = is_constrained ? repetitions : 1;
-
-        double t_dp_topdown = 0.0;
-        double t_dp_bottomup = 0.0;
-        double t_greedy_score = 0.0;
-        double t_greedy_score_cost = 0.0;
-        double t_greedy_lowest_cost = 0.0;
-        double t_greedy_unconstrained = 0.0;
-
-        double score_dp_topdown = 0.0;
-        double score_dp_bottomup = 0.0;
-        double score_greedy_score = 0.0;
-        double score_greedy_score_cost = 0.0;
-        double score_greedy_lowest_cost = 0.0;
-        double score_greedy_unconstrained = 0.0;
-
-        int total_cost = total_cost_for_prefix(working, k);
-        int budget = 0;
-        if (is_constrained) {
-            /* Budgeted experiment: use fixed budget from config */
-            budget = TEAM_FIXED_BUDGET;
-        } else {
-            int budget_ratio = 2;
-            budget = total_cost / budget_ratio;
-            if (budget < 1) budget = 1;
-        }
-        if (budget > TEAM_FIXED_BUDGET) budget = TEAM_FIXED_BUDGET;
-
-        int team_size = 0;
-        if (!is_constrained) {
-            team_size = (3 * k) / 4;
-            if (team_size < 1) team_size = 1;
-            if (team_size > k) team_size = k;
-        }
-
-        for (int run = 0; run < outer_runs; run++) {
-            if (is_constrained && run > 0) {
-                shuffle_players(working, n);
-            }
-
-            struct timespec t0, t1;
-
-            copy_prefix(buf, working, k);
-            clock_gettime(CLOCK_MONOTONIC, &t0);
-            Team team = create_team_dp_topdown(buf, k, budget, 0);
-            clock_gettime(CLOCK_MONOTONIC, &t1);
-            t_dp_topdown += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
-            if (run == 0) score_dp_topdown = team_total_score(&team);
-            free_team(&team);
-
-            copy_prefix(buf, working, k);
-            clock_gettime(CLOCK_MONOTONIC, &t0);
-            team = create_team_dp_bottomup(buf, k, budget, 0);
-            clock_gettime(CLOCK_MONOTONIC, &t1);
-            t_dp_bottomup += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
-            if (run == 0) score_dp_bottomup = team_total_score(&team);
-            free_team(&team);
-
-            copy_prefix(buf, working, k);
-            clock_gettime(CLOCK_MONOTONIC, &t0);
-            team = create_team_greedy(buf, k, budget, 0, GREEDY_BY_SCORE);
-            clock_gettime(CLOCK_MONOTONIC, &t1);
-            t_greedy_score += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
-            if (run == 0) score_greedy_score = team_total_score(&team);
-            free_team(&team);
-
-            copy_prefix(buf, working, k);
-            clock_gettime(CLOCK_MONOTONIC, &t0);
-            team = create_team_greedy(buf, k, budget, 0, GREEDY_BY_SCORE_COST);
-            clock_gettime(CLOCK_MONOTONIC, &t1);
-            t_greedy_score_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
-            if (run == 0) score_greedy_score_cost = team_total_score(&team);
-            free_team(&team);
-
-            copy_prefix(buf, working, k);
-            clock_gettime(CLOCK_MONOTONIC, &t0);
-            team = create_team_greedy(buf, k, budget, 0, GREEDY_BY_LOWEST_COST);
-            clock_gettime(CLOCK_MONOTONIC, &t1);
-            t_greedy_lowest_cost += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
-            if (run == 0) score_greedy_lowest_cost = team_total_score(&team);
-            free_team(&team);
-
-            if (!is_constrained) {
-                copy_prefix(buf, working, k);
-                clock_gettime(CLOCK_MONOTONIC, &t0);
-                team = create_team_greedy_unconstrained(buf, k, team_size);
-                clock_gettime(CLOCK_MONOTONIC, &t1);
-                t_greedy_unconstrained += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
-                if (run == 0) score_greedy_unconstrained = team_total_score(&team);
-                free_team(&team);
-            }
-        }
-
-        t_dp_topdown /= outer_runs;
-        t_dp_bottomup /= outer_runs;
-        t_greedy_score /= outer_runs;
-        t_greedy_score_cost /= outer_runs;
-        t_greedy_lowest_cost /= outer_runs;
-        t_greedy_unconstrained /= outer_runs;
-
-        if (!experiment_quiet) {
-            printf(PURPLE "║" MAGENTA " Procesando n =\t" WHITE " %8d" PURPLE "                             ║\n", k);
-            printf(PURPLE "║" LIGHT_BLUE " Budget:\t\t" WHITE " %8d" PURPLE "                             ║\n", budget);
-            if (is_constrained) {
-                printf(PURPLE "║" LIGHT_BLUE " Team size:" WHITE " %6d" PURPLE "                                      ║\n", team_size);
-            }
-        }
-
-        fprintf(csv, "%d,%d,%d,%.9f,%.9f,%.9f,%.9f,%.9f,%.9f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
-                k,
-                budget,
-                team_size,
-                t_dp_topdown, t_dp_bottomup, t_greedy_score, t_greedy_score_cost,
-                t_greedy_lowest_cost, t_greedy_unconstrained,
-                score_dp_topdown, score_dp_bottomup, score_greedy_score,
-                score_greedy_score_cost, score_greedy_lowest_cost,
-                score_greedy_unconstrained);
+    FILE *csv_b = fopen(out_file_b, "w");
+    if (csv_b == NULL) {
+        print_error(101, out_file_b, NULL);
+        fclose(csv_a);
+        free(players); free(buf); free(working);
+        return;
     }
 
-        if (!experiment_quiet) {
-            printf("Team experiment saved in %s\n", out_file);
-        }
+    switch (is_constrained) {
+        case 1:
+            run_constrained_vary_n(working, buf, n, csv_a);
+            memcpy(working, players, (size_t)n * sizeof(Player));
+            run_constrained_vary_budget(working, buf, csv_b);
+            break;
+        case 0:
+            run_unconstrained_vary_n(working, buf, n, csv_a);
+            memcpy(working, players, (size_t)n * sizeof(Player));
+            run_unconstrained_vary_k(working, buf, n, csv_b);
+            break;
+        default:
+            break;
+    }
 
-    fclose(csv);
+    if (!experiment_quiet) {
+        printf("Team experiment saved in %s and %s\n", out_file_a, out_file_b);
+    }
+
+    fclose(csv_a);
+    fclose(csv_b);
     free(players);
     free(buf);
     free(working);
