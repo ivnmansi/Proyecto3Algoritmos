@@ -4,3 +4,12 @@
 *.o
 .vscode
 compile_commands.json
+*.bcf
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.run.xml
+*.synctex.gz
+*.toc
+*.aux

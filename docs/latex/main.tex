@@ -1,0 +1,48 @@
+\documentclass[12pt,letterpaper,oneside]{report}
+\input{preamble}
+
+\begin{document}
+
+% --------------- Metadata (edit these) ----------------
+\newcommand{\tituloInforme}{Programación Dinámica y Algoritmos Greedy}
+\newcommand{\AuthorName}{Iván Mansilla (ivnmansi@umag.cl) \\ Andrés Barbosa (@umag.cl) \\ Óscar Cifuentes (caastudi@umag.cl)}
+\newcommand{\nombreCarrera}{Ingeniería en Computación e Informática}
+\newcommand{\profesorRamo}{MSc. Jacqueline Aldridge}
+\newcommand{\nombreRamo}{Diseño de Algoritmos}
+\newcommand{\University}{Facultad de Ingeniería \\ Departamento de Ingeniería en Computación e Informática}
+\newcommand{\GradYear}{2026}
+
+% ----- Front matter -----
+
+\input{frontmatter/titlepage}  % i (hidden)
+\cleardoublepage               % next page will be ii
+
+\pagenumbering{roman}
+\setcounter{page}{2}
+\cleardoublepage
+\input{frontmatter/abstract}
+\cleardoublepage
+\tableofcontents
+\cleardoublepage
+\listoffigures
+\cleardoublepage
+
+% -------------------- Main Matter ---------------------
+\pagenumbering{arabic}  % switch to 1, 2, 3...
+\setcounter{page}{1}
+
+\input{chapters/ch1_introduccion}
+\input{chapters/ch2_objetivos}
+\input{chapters/ch3_marco_teorico}
+\input{chapters/ch4_desarrollo}
+\input{chapters/ch5_analisis_resultados}
+\input{chapters/ch6_conclusion}
+\input{chapters/ch7_anexos}
+
+% -------------------- Appendices ----------------------
+
+
+% ------------------- Bibliography ---------------------
+\printbibliography
+
+\end{document}
