@@ -164,8 +164,8 @@ void run_experiment(const char* target_file, const char* out_filename, int is_av
             if (current_active_flags & FLAG_INSERTION_SORT) printf(PURPLE "║" LIGHT_BLUE  "\tInsertion Sort:        " WHITE " %f" PURPLE "         ║\n", tIns);
             if (current_active_flags & FLAG_SELECTION_SORT) printf(PURPLE "║" LIGHT_BLUE  "\tSelection Sort:        " WHITE " %f" PURPLE "         ║\n", tSel);
             if (current_active_flags & FLAG_COCKTAIL_SORT)  printf(PURPLE "║" LIGHT_BLUE  "\tCocktail Shaker Sort:  " WHITE " %f" PURPLE "         ║\n", tCock);
-            if (current_active_flags & FLAG_MERGE_CLASSIC)  printf(PURPLE "║" YELLOW     "\tMerge Sort Classic:    " WHITE " %f" PURPLE "         ║\n", tMergeClas);
-            if (current_active_flags & FLAG_MERGE_OPT16)    printf(PURPLE "║" YELLOW     "\tMerge Sort Opt(16):    " WHITE " %f" PURPLE "         ║\n", tMerge16);
+            if (current_active_flags & FLAG_MERGE_CLASSIC)  printf(PURPLE "║" YELLOW     "\tMerge Sort Classic:     " WHITE " %f" PURPLE "         ║\n", tMergeClas);
+            if (current_active_flags & FLAG_MERGE_OPT16)    printf(PURPLE "║" YELLOW     "\tMerge Sort Opt(16):     " WHITE " %f" PURPLE "         ║\n", tMerge16);
             if (current_active_flags & FLAG_QUICK_LAST)     printf(PURPLE "║" LIGHT_GREEN "\tQuick Sort (Last):     " WHITE " %f" PURPLE "         ║\n", tQLast);
             if (current_active_flags & FLAG_QUICK_FIRST)    printf(PURPLE "║" LIGHT_GREEN "\tQuick Sort (First):    " WHITE " %f" PURPLE "         ║\n", tQFirst);
             if (current_active_flags & FLAG_QUICK_RANDOM)   printf(PURPLE "║" LIGHT_GREEN "\tQuick Sort (Random):   " WHITE " %f" PURPLE "         ║\n", tQRand);

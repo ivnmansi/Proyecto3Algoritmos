@@ -249,7 +249,7 @@ Team create_team_greedy_unconstrained(Player *players, int n, int team_size){
 
     if (team_size > n) team_size = n;
 
-    for(int i = 0; i < team_size; i++){
+    for(int i = n - 1; i >= n - team_size; i--){
         add_player_to_team(&team, players[i]);
     }
 
